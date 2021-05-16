@@ -16,6 +16,16 @@ class Exchange:
     ### API
 
     def __init__(self, logger):
+        with open('conf.txt', 'r') as file:
+            data = file.read().split('\n')
+            self.dbuser = data[0]
+            self.dbpass = data[1]
+            self.dbhost = data[2]
+            self.dbport = data[3]
+            self.dbdb = data[4]
+
+            self.binance_api_key = data[5]
+            self.binance_api_secret = data[6]
         self.binance  = ccxt.binance({
             'apiKey': self.binance_api_key,
             'secret': self.binance_api_secret,
@@ -28,22 +38,9 @@ class Exchange:
 
         self.log = logger
 
-        with open('conf.txt', 'r') as file:
-            data = file.read().split('\n')
-            self.dbuser = data[0]
-            self.dbpass = data[1]
-            self.dbhost = data[2]
-            self.dbport = data[3]
-            self.dbdb = data[4]
 
-            binance_api_key = data[5]
-            binance_api_secret = data[6]
 
-        self.connection = psycopg2.connect(user=self.dbuser,
-                                           password=self.dbpass,
-                                           host=self.dbhost,
-                                           port=self.dbport,
-                                           database=self.dbdb)
+
 
         self.leverage = 5
         self.order_size = 5
@@ -51,7 +48,9 @@ class Exchange:
         self.stop_loss_perc = 3
 
         self.open_positions = []
+
         self.update_open_positions()
+
         # self.set_leverage(self.leverage)
 
 
@@ -138,6 +137,11 @@ class Exchange:
     def get_last_price(self, symbol):
         symbol = symbol.replace('/','')
         try:
+            self.connection = psycopg2.connect(user=self.dbuser,
+                                               password=self.dbpass,
+                                               host=self.dbhost,
+                                               port=self.dbport,
+                                               database=self.dbdb)
             conn = self.connection
             cursor = conn.cursor()
             postgreSQL_select_Query = "SELECT c8 as Close FROM klines WHERE s3 = '{}' order by t1 desc LIMIT 1 ".format(
@@ -145,8 +149,8 @@ class Exchange:
             cursor.execute(postgreSQL_select_Query)
             kline_records = cursor.fetchall()
             return kline_records[0][0]
-        except:
-            pass
+        except (Exception, psycopg2.Error) as error:
+            print("Error while fetching data from PostgreSQL", error)
         finally:
             pass
 
