@@ -410,6 +410,7 @@ def main():
     strategy_handler.setFormatter(formatter)
     order_logger.addHandler(strategy_handler)
     order_logger.setLevel(logging.INFO)
+
     #
     # strategy_logger = logging.getLogger('strategy')
     # strategy_handler = logging.FileHandler('strategy.log')

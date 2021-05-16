@@ -1,7 +1,6 @@
 import pandas
 import psycopg2
 import util
-import time,datetime
 
 
 class Data:
@@ -34,20 +33,6 @@ class Data:
         newdf = newdf.reindex(index=newdf.index[::-1])
         # newdf.columns = [desc[0] for desc in newdf.description]
         return newdf
-    def data_is_live(self) -> bool:
-        live = False
-        ts1 = time.time()
-        ts2 = int(ts1*1000)
-        db_timespan = self.all_data.iloc[0]['t1']
-        time_lag = int((ts2-int(db_timespan))/60000)
-        if time_lag < 5:
-            live = True
-        else:
-            print("we have backwardness : ", time_lag, " Minutes!")
-            print("database is not updating or check if local system datetime is not set to UTC")
-        return live
-
-
     def load(self) -> pandas.DataFrame:
         #load data from database into dataframe using self.symbol and self.interval
         self.connection = psycopg2.connect(user=self.dbuser,
@@ -118,13 +103,12 @@ class Data:
 
         pass
     def get_symbols(self):
-
+        self.connection = psycopg2.connect(user=self.dbuser,
+                                           password=self.dbpass,
+                                           host=self.dbhost,
+                                           port=self.dbport,
+                                           database=self.dbdb)
         try:
-            self.connection = psycopg2.connect(user=self.dbuser,
-                                               password=self.dbpass,
-                                               host=self.dbhost,
-                                               port=self.dbport,
-                                               database=self.dbdb)
             cursor = self.connection.cursor()
             postgreSQL_select_Query = "select sname from symbols"
             cursor.execute(postgreSQL_select_Query)
@@ -135,10 +119,10 @@ class Data:
         finally:
             # closing database connection.
             return self.symbol_records
-            # if (self.connection):
-            #     # cursor.close()
-            #     # self.connection.close()
-            #     print("Symbols Loaded!")
+            if (self.connection):
+                # cursor.close()
+                # self.connection.close()
+                print("Symbols Loaded!")
 
     def geth(self,dfi)-> pandas.DataFrame:
         # print(len(dfi))
