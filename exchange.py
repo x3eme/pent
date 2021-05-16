@@ -16,15 +16,7 @@ class Exchange:
     ### API
 
     def __init__(self, logger):
-        self.binance  = ccxt.binance({
-            'apiKey': self.binance_api_key,
-            'secret': self.binance_api_secret,
-            'enableRateLimit': True,  # https://github.com/ccxt/ccxt/wiki/Manual#rate-limit
-            'options': {
-                'defaultType': 'future',
-                "adjustForTimeDifference": True
-            }
-        })
+
 
         self.log = logger
 
@@ -36,8 +28,18 @@ class Exchange:
             self.dbport = data[3]
             self.dbdb = data[4]
 
-            binance_api_key = data[5]
-            binance_api_secret = data[6]
+            self.binance_api_key = data[5]
+            self.binance_api_secret = data[6]
+
+            self.binance = ccxt.binance({
+                'apiKey': self.binance_api_key,
+                'secret': self.binance_api_secret,
+                'enableRateLimit': True,  # https://github.com/ccxt/ccxt/wiki/Manual#rate-limit
+                'options': {
+                    'defaultType': 'future',
+                    "adjustForTimeDifference": True
+                }
+            })
 
         self.connection = psycopg2.connect(user=self.dbuser,
                                            password=self.dbpass,

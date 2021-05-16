@@ -1,4 +1,4 @@
-import ta
+import hta
 import pandas
 import data
 import time
@@ -6,7 +6,7 @@ import time
 from exchange import Exchange
 import logging
 
-from ta.trend import (
+from hta import (
     MACD,
     ADXIndicator,
     AroonIndicator,
