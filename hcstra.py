@@ -1,4 +1,4 @@
-import hta
+import ta
 import pandas
 import data
 import time
@@ -6,7 +6,7 @@ import time
 from exchange import Exchange
 import logging
 
-from hta import (
+from ta.trend import (
     MACD,
     ADXIndicator,
     AroonIndicator,
@@ -94,26 +94,33 @@ class Strategy:
 
     def decide(self):
         try:
-            if float(self.cc5l) < float(-140):
-                self.strat_log.info("short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5: " + str(self.cc5h))
-            if float(self.cc5h) > float(140):
-                self.strat_log.info("long: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5: " + str(self.cc5l))
+            if float(self.cch) < float(-200):
+                self.strat_log.info("possible long: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5: " + str(self.cc5h))
+                # print("possible long: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5l: " + str(self.cc5l))
+            if float(self.cch) > float(200):
+                self.strat_log.info("possible short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5: " + str(self.cc5l))
+                # print("possible short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5h: " + str(self.cc5h))
 
 
 
             if float(self.cc5l) < float(-220):# and float(self.cch) < float(-200):
                 self.strat_log.info("long: " + self.symbol)
-                # self.ex.open_long(self.symbol)
+                # print("long: " + self.symbol)
+                self.ex.open_long(self.symbol)
 
-                frequency = 2500  # Set Frequency To 2500 Hertz
-                duration = 1000  # Set Duration To 1000 ms == 1 second
-            if float(self.cc5h) > float(220): #and float(self.cch) > float(200):
+                # frequency = 2500  # Set Frequency To 2500 Hertz
+                # duration = 1000  # Set Duration To 1000 ms == 1 second
+                # winsound.Beep(frequency, duration)
+            if float(self.cc5h) > float(220):# and float(self.cch) > float(200):
+                # print("short: " + self.symbol)
                 self.strat_log.info("short: " + self.symbol)
-                # self.ex.open_short(self.symbol)
+                self.ex.open_short(self.symbol)
 
 
-                frequency = 2500  # Set Frequency To 2500 Hertz
-                duration = 1000  # Set Duration To 1000 ms == 1 second
+                # frequency = 2500  # Set Frequency To 2500 Hertz
+                # duration = 1000  # Set Duration To 1000 ms == 1 second
+                # winsound.Beep(frequency, duration)
+
 
         except:
             pass
