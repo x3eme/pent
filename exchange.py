@@ -20,7 +20,7 @@ class Exchange:
 
         self.log = logger
 
-        with open('conf.txt', 'r') as file:
+        with open('prod.txt', 'r') as file:
             data = file.read().split('\n')
             self.dbuser = data[0]
             self.dbpass = data[1]
