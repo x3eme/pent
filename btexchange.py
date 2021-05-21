@@ -1,12 +1,11 @@
 
 
-import logging
 from btposition import Btposition
 
 class Btexchange:
     ### API
 
-    def __init__(self, logger):
+    def __init__(self):
 
         self.leverage = 1
         self.order_size = 1000
@@ -50,7 +49,7 @@ class Btexchange:
                 if po.symbol == symbol:
                     po.closePrice = price
                     po.closet = candle[0]
-                    po.unrealizedProfit = po.closePrice - po.entryPrice
+                    po.unrealizedProfit = (po.closePrice - po.entryPrice)/po.entryPrice
                     self.balance = self.balance + po.unrealizedProfit
                     self.positions.remove(po)
                     self.closed_positions.append(po)
