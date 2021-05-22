@@ -1,5 +1,7 @@
 
 import logging
+from datetime import datetime
+
 from btposition import Btposition
 
 class Btexchange:
@@ -8,13 +10,13 @@ class Btexchange:
     def __init__(self):
 
         self.leverage = 1
-        self.order_size = 1000
-        self.balance = 1000
+        self.order_size = 10000
+        self.balance = 10000
         self.stoploss = 3
 
         self.positions = []
         self.closed_positions = []
-        self.totalpnl = 0
+        self.totalpnl = 1
 
 
     def entry(self, symbol, side, candle, price=None):
@@ -50,14 +52,17 @@ class Btexchange:
                 if po.symbol == symbol and po.side == side:
                     po.closePrice = price
                     po.closet = candle[0]
-                    po.unrealizedProfit = round(((po.closePrice - po.entryPrice)/po.entryPrice)*100, 2)
-                    self.totalpnl = self.totalpnl + po.unrealizedProfit
-                    self.balance = self.balance + po.unrealizedProfit
+
+                    pnlperc = round(((po.closePrice - po.entryPrice)/po.entryPrice)*100, 2)
+                    change_cap_perc = 100 + pnlperc
+                    po.unrealizedProfit = pnlperc
+                    self.balance = self.balance * (change_cap_perc/100)
                     self.positions.remove(po)
                     self.closed_positions.append(po)
                     print("----------")
+                    print(datetime.fromtimestamp(candle[0]/1000))
                     print(po)
-                    print("total PnL: " + str(self.totalpnl))
+                    print("balance: " + str(self.balance) + "(" + str(round(pnlperc, 2)) + ")")
 
 
     def update(self, candle):

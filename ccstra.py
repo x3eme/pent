@@ -153,14 +153,14 @@ class Strategy:
             # frequency = 2500  # Set Frequency To 2500 Hertz
             # duration = 1000  # Set Duration To 1000 ms == 1 second
             # winsound.Beep(frequency, duration)
-        if float(self.cc5l) > float(0):
+        if float(self.cc5l) > float(100):
             self.ex1.close(self.symbol, "buy", self.candle)
             # self.ex.close_long(self.symbol)
             # pass
             # print("close_long : " + self.symbol + " at " + str(self.lastc))
             self.retval += "-close_long"
 
-        if float(self.cc5h) < float(0):
+        if float(self.cc5h) < float(-100):
             self.ex1.close(self.symbol, "sell", self.candle)
             # self.ex.close_short(self.symbol)
             # pass
