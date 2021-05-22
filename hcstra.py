@@ -1,12 +1,13 @@
-import ta
+# import ta
 import pandas
 import data
 import time
 import winsound
 from exchange import Exchange
 import logging
+import hta
 
-from ta.trend import (
+from hta import (
     MACD,
     ADXIndicator,
     AroonIndicator,

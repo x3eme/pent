@@ -7,7 +7,6 @@ import binance
 import psycopg2
 from binance import Client
 from binance.enums import HistoricalKlinesType
-import winsound
 import datetime
 from btexchange import Btexchange
 class Backtest:

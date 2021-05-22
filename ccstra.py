@@ -1,13 +1,13 @@
-import ta
+import hta
 import pandas
 import data
 import time
-import winsound
 from exchange import Exchange
 import logging
 from btexchange import Btexchange
 
-from ta.trend import (
+
+from hta import (
     MACD,
     ADXIndicator,
     AroonIndicator,
@@ -66,7 +66,7 @@ class Strategy:
 
     def ta(self):
         self.df = self.data
-        # print(df)
+        # print(self.df)
         # dfh = self.datah
         # CCI Indicator
         # low
