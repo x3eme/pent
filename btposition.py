@@ -3,10 +3,11 @@
 class Btposition:
 
 
-    def __init__(self, symbol, side, positionAmt, leverage, entryPrice, closePrice=None, unrealizedProfit=None, opent=None,closet=None):
+    def __init__(self, symbol, side, timestamp, positionAmt, leverage, entryPrice, closePrice=None, unrealizedProfit=None, opent=None,closet=None):
 
         self.symbol = symbol
         self.side = side
+        self.timestamp = timestamp
         self.positionAmt = positionAmt
         self.leverage = leverage
         self.entryPrice = entryPrice
@@ -21,11 +22,12 @@ class Btposition:
 
 
     def __str__(self):
-        return self.symbol + "," + \
-               self.side + "," + \
-               str(self.entryPrice) + "," + \
-               str(self.closePrice) + "," + \
-               str(self.unrealizedProfit)
+        return self.timestamp + "," + \
+            self.symbol + "," + \
+            self.side + "," + \
+            str(self.entryPrice) + "," + \
+            str(self.closePrice) + "," + \
+            str(self.unrealizedProfit)
 
 
 
