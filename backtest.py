@@ -2,6 +2,7 @@ import sqlite3
 import exchange
 import pandas
 import ccstra
+from plot import Plot
 import data
 import binance
 import psycopg2
@@ -58,6 +59,8 @@ class Backtest:
             else:
                 ind += 1
         print(datetime.datetime.now())
+        pl = Plot()
+        pl.plot(self.ex1.closed_positions)
 
         # print(self.rows)
         # pair = input("Enter pair (ex:'btcusdt' or 'all' for all pairs): ")
