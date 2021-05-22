@@ -23,12 +23,9 @@ class Btposition:
     def __str__(self):
         return self.symbol + "," + \
                self.side + "," + \
-               self.positionAmt + "," + \
-               self.entryPrice + "," + \
-               self.closePrice + "," + \
-               self.opent + "," + \
-               self.closet + "," + \
-               self.unrealizedProfit
+               str(self.entryPrice) + "," + \
+               str(self.closePrice) + "," + \
+               str(self.unrealizedProfit)
 
 
 

@@ -1,6 +1,9 @@
+import sqlite3
+
 import pandas
 import psycopg2
 import util
+import time,datetime
 
 
 class Data:
@@ -21,7 +24,8 @@ class Data:
         # self.symbol = symbol
         # self.interval = interval
         # self.data = self.load()
-
+    def get_historical_data(self):
+        conn = sqlite3.connect(db_file)
     def dbconnect(self):
         return psycopg2.connect(user=self.dbuser,
                                            password=self.dbpass,
@@ -33,6 +37,20 @@ class Data:
         newdf = newdf.reindex(index=newdf.index[::-1])
         # newdf.columns = [desc[0] for desc in newdf.description]
         return newdf
+    def data_is_live(self) -> bool:
+        live = False
+        ts1 = time.time()
+        ts2 = int(ts1*1000)
+        db_timespan = self.all_data.iloc[0]['t1']
+        time_lag = int((ts2-int(db_timespan))/60000)
+        if time_lag < 7:
+            live = True
+        else:
+            print("we have backwardness : ", time_lag, " Minutes!")
+            print("database is not updating or check if local system datetime is not set to UTC")
+        return live
+
+
     def load(self) -> pandas.DataFrame:
         #load data from database into dataframe using self.symbol and self.interval
         self.connection = psycopg2.connect(user=self.dbuser,

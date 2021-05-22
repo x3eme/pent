@@ -15,7 +15,7 @@ def same_symbol(symbol_a, symbol_b):
 class Exchange:
     ### API
 
-    def __init__(self, logger):
+    def __init__(self, logger=None):
         with open('conf.txt', 'r') as file:
             data = file.read().split('\n')
             self.dbuser = data[0]
@@ -36,15 +36,11 @@ class Exchange:
             }
         })
 
-        self.log = logger
+        # self.log = logger
 
-
-
-
-
-        self.leverage = 5
-        self.order_size = 5
-        self.allowed_balance = 120
+        self.leverage = 10
+        self.order_size = 300
+        self.allowed_balance = 3300
         self.stop_loss_perc = 3
 
         self.open_positions = []

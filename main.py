@@ -2,14 +2,18 @@
 import data
 import hcstra
 from exchange import Exchange
-# import winsound
+import winsound
 import logging
 import time
 import traceback
 
 
+
 class main:
     def __init__(self):
+        frequency = 2500  # Set Frequency To 2500 Hertz
+        duration = 1000  # Set Duration To 1000 ms == 1 second
+        winsound.Beep(frequency, duration)
         pass
     def run(self):
         cnt = 0
@@ -48,7 +52,7 @@ class main:
 
                 # check that data is not outdated
                 if not self.my_data.data_is_live():
-                    break
+                    pass
 
                 print("------------------------------------------------")
                 ii = 0
@@ -59,6 +63,9 @@ class main:
                     ii += 1
                 wait_sec = 0
             except Exception as e:
+                frequency = 2500  # Set Frequency To 2500 Hertz
+                duration = 1000  # Set Duration To 1000 ms == 1 second
+                winsound.Beep(frequency, duration)
                 print('There was an error during main loop: ' + str(e))
                 traceback.print_exc()
                 if wait_sec<10:
