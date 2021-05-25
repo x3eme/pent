@@ -7,7 +7,7 @@ from datetime import date
 
 class Plot:
 
-    def __init__():
+    def __init__(self):
         if not os.path.exists('backtest'):
             os.makedirs('backtest')
 

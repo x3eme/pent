@@ -1,3 +1,4 @@
+from datetime import datetime
 
 
 class Btposition:
@@ -22,12 +23,12 @@ class Btposition:
 
 
     def __str__(self):
-        return self.timestamp + "," + \
-            self.symbol + "," + \
-            self.side + "," + \
-            str(self.entryPrice) + "," + \
-            str(self.closePrice) + "," + \
-            str(self.unrealizedProfit)
+        return str(datetime.fromtimestamp(self.timestamp/1000)) + "," + \
+               self.symbol + "," + \
+               self.side + "," + \
+               str(self.entryPrice) + "," + \
+               str(self.closePrice)
+
 
 
 

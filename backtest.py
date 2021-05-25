@@ -14,9 +14,9 @@ class Backtest:
     def __init__(self):
         self.pair="XRPUSDT"
         self.period = 3 #period in months
-        self.start_date = datetime.datetime(2020, 4, 1)
-        self.market_type = "SPOT" # FUTURES or SPOT
-        self.initial_capital = 10000 # in USDT
+        self.start_date = datetime.datetime(2020, 3, 1)
+        self.market_type = "FUTURES" # FUTURES or SPOT
+        self.initial_capital = 100 # in USDT
         self.portion_per_trade = 1 # 1 for all 0.2 for 20 percent
         self.candles_length = 20 # candles strategy needs to decide
         self.ccstra = ccstra.Strategy()

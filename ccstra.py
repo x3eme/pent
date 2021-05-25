@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import hta
 import pandas
 import data
@@ -123,6 +125,8 @@ class Strategy:
 
     def decide(self):
         # print("we are in decide")
+        self.ex1.update(self.candle)
+
         self.retval = "-"
         # try:
         # if float(self.cc5h) < float(-220):
@@ -133,6 +137,7 @@ class Strategy:
         #     print("possible short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5h: " + str(self.cc5h))
 
         if float(self.cc5l) < float(-220):  # and float(self.cch) < float(-200):
+            # print("{} cci5l {}".format(str(datetime.fromtimestamp(self.candle[0]/1000)),str(self.cc5l)))
             self.ex1.entry(self.symbol,"buy",self.candle,self.lastc)
             # self.strat_log.info("long: " + self.symbol)
             # print("long: " + self.symbol)
@@ -143,6 +148,7 @@ class Strategy:
             # duration = 1000  # Set Duration To 1000 ms == 1 second
             # winsound.Beep(frequency, duration)
         if float(self.cc5h) > float(220):  # and float(self.cch) > float(200):
+            # print("{} cci5h {}".format(str(datetime.fromtimestamp(self.candle[0]/1000)),str(self.cc5h)))
             self.ex1.entry(self.symbol, "sell", self.candle, self.lastc)
             # print("short: " + self.symbol)
             # self.strat_log.info("short: " + self.symbol)
@@ -154,6 +160,7 @@ class Strategy:
             # duration = 1000  # Set Duration To 1000 ms == 1 second
             # winsound.Beep(frequency, duration)
         if float(self.cc5l) > float(100):
+            # print("{} cci5l {}".format(str(datetime.fromtimestamp(self.candle[0]/1000)),str(self.cc5l)))
             self.ex1.close(self.symbol, "buy", self.candle)
             # self.ex.close_long(self.symbol)
             # pass
@@ -161,6 +168,7 @@ class Strategy:
             self.retval += "-close_long"
 
         if float(self.cc5h) < float(-100):
+            # print("{} cci5h {}".format(str(datetime.fromtimestamp(self.candle[0]/1000)),str(self.cc5h)))
             self.ex1.close(self.symbol, "sell", self.candle)
             # self.ex.close_short(self.symbol)
             # pass
@@ -169,7 +177,6 @@ class Strategy:
         if self.retval == "-":
             pass
             # self.retval += "-nothing"
-        self.ex1.update(self.candle)
 
         # except Exception as e:
         #
