@@ -73,7 +73,16 @@ class Strategy:
         # CCI Indicator
         # low
         try:
-
+            self.avoid = False
+            difff = float(self.df.tail(1)["high"])-float(self.df.tail(1)["low"])
+            iin = 0
+            summ = 0
+            while iin<19:
+                summ += (float(self.df[iin]["high"])-float(self.df[iin]["low"]))
+                iin += 1
+            avg = summ/19
+            if (difff>3*avg):
+                self.avoid = True
             self.df["trend_cci_low"] = CCIIndicator(
                 high=self.df['high'],
                 low=self.df['low'],
@@ -128,6 +137,7 @@ class Strategy:
         self.ex1.update(self.candle)
 
         self.retval = "-"
+        self.ex1.update(self.candle)
         # try:
         # if float(self.cc5h) < float(-220):
         #     self.strat_log.info("possible long: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5: " + str(self.cc5h))
@@ -136,7 +146,7 @@ class Strategy:
         #     self.strat_log.info("possible short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5: " + str(self.cc5l))
         #     print("possible short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5h: " + str(self.cc5h))
 
-        if float(self.cc5l) < float(-220):  # and float(self.cch) < float(-200):
+        if float(self.cc5l) < float(-220) and not self.avoid:  # and float(self.cch) < float(-200):
             # print("{} cci5l {}".format(str(datetime.fromtimestamp(self.candle[0]/1000)),str(self.cc5l)))
             self.ex1.entry(self.symbol,"buy",self.candle,self.lastc)
             # self.strat_log.info("long: " + self.symbol)
@@ -147,7 +157,7 @@ class Strategy:
             # frequency = 2500  # Set Frequency To 2500 Hertz
             # duration = 1000  # Set Duration To 1000 ms == 1 second
             # winsound.Beep(frequency, duration)
-        if float(self.cc5h) > float(220):  # and float(self.cch) > float(200):
+        if float(self.cc5h) > float(220) and not self.avoid:  # and float(self.cch) > float(200):
             # print("{} cci5h {}".format(str(datetime.fromtimestamp(self.candle[0]/1000)),str(self.cc5h)))
             self.ex1.entry(self.symbol, "sell", self.candle, self.lastc)
             # print("short: " + self.symbol)
