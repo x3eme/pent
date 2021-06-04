@@ -12,7 +12,7 @@ class Btexchange:
         self.leverage = 1
         self.order_size = 100
         self.balance = 100
-        self.stoploss = 3
+        self.stoploss = 1
 
         self.positions = []
         self.closed_positions = []
