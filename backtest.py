@@ -2,6 +2,7 @@ import sqlite3
 import exchange
 import pandas
 import ccstra
+import rsistochstra
 from plot import Plot
 import data
 import binance
@@ -13,14 +14,15 @@ from btexchange import Btexchange
 class Backtest:
     def __init__(self):
         self.pair="XRPUSDT"
-        self.period = 3 #period in months
-        self.start_date = datetime.datetime(2020, 3, 1)
+        self.period = 1 #period in months
+        self.start_date = datetime.datetime(2020, 9, 1)
         self.market_type = "FUTURES" # FUTURES or SPOT
+
         self.initial_capital = 100 # in USDT
         self.portion_per_trade = 1 # 1 for all 0.2 for 20 percent
         self.candles_length = 20 # candles strategy needs to decide
-        self.ccstra = ccstra.Strategy()
-        self.ex1 =  Btexchange()
+        self.ccstra = rsistochstra.Strategy()
+        self.ex1 =Btexchange()
 
     def start(self):
         print(datetime.datetime.now())

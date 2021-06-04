@@ -72,17 +72,18 @@ class Strategy:
         # dfh = self.datah
         # CCI Indicator
         # low
+        self.avoid = False
+        difff = float(self.df.tail(1)["high"]) - float(self.df.tail(1)["low"])
+        iin = 0
+        summ = 0
+        while iin < 19:
+            summ += (float(self.df.iloc[iin]["high"]) - float(self.df.iloc[iin]["low"]))
+            iin += 1
+        avg = summ / 19
+        if (difff > 3 * avg):
+            self.avoid = True
         try:
-            self.avoid = False
-            difff = float(self.df.tail(1)["high"])-float(self.df.tail(1)["low"])
-            iin = 0
-            summ = 0
-            while iin<19:
-                summ += (float(self.df[iin]["high"])-float(self.df[iin]["low"]))
-                iin += 1
-            avg = summ/19
-            if (difff>3*avg):
-                self.avoid = True
+
             self.df["trend_cci_low"] = CCIIndicator(
                 high=self.df['high'],
                 low=self.df['low'],
