@@ -17,7 +17,7 @@ from btexchange import Btexchange
 class Backtest:
     def __init__(self):
         self.period = 1  # period in months
-        self.start_date = datetime.datetime(2020, 12, 1)
+        self.start_date = datetime.datetime(2021, 4, 1)
         self.market_type = "FUTURES"  # FUTURES or SPOT
 
         self.initial_capital = 100  # in USDT
@@ -45,7 +45,7 @@ class Backtest:
         print("loading data ...")
         self.cur = self.conn.cursor()
         self.cur.execute(
-            "SELECT timespan1, CAST(open as float) as open ,CAST(high as float) as high ,CAST(low as float) as low ,CAST(close as float) as close,volume FROM " + pair + " where timespan1>" + str(
+            "SELECT timespan1, CAST(open as float) as open ,CAST(high as float) as high ,CAST(low as float) as low ,CAST(close as float) as close,volume FROM " + pair + "_5m where timespan1>" + str(
                 self.start_timespan - 1) + " and timespan1<" + str(self.finish_timespan + 1) + "")
 
         self.rows = self.cur.fetchall()
@@ -79,7 +79,7 @@ class Backtest:
 def main():
     pl = Plot()
     threads = []
-    pairs = ["ADAUSDT", "ETHUSDT", "XRPUSDT", "EOSUSDT"]
+    pairs = ["LINKUSDT", "BCHUSDT", "TRXUSDT", "BATUSDT"]
     for p in pairs:
         bt = Backtest()
         t = Thread(target=bt.run, args=(p,pl))
