@@ -37,17 +37,18 @@ class Exchange:
         })
 
         # self.log = logger
-
         self.leverage = 10
-        self.order_size = 300
-        self.allowed_balance = 3300
+        self.order_size = 10
+        self.allowed_balance = 120
         self.stop_loss_perc = 3
-
         self.open_positions = []
-
+        self.pair_balance = []
         self.update_open_positions()
-
         # self.set_leverage(self.leverage)
+
+    def get_avail_balance(self, symbol):
+        pass
+
 
 
     def update_open_positions(self):
@@ -456,7 +457,6 @@ def main():
     #     print(pos)
     #     print("close {}".format(pos))
     #     bnc.close(pos)
-
 
 if __name__ == '__main__':
     main()
