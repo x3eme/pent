@@ -56,8 +56,8 @@ class kline:
                 print("PostgreSQL connection is closed")
         self.pairs = self.pairs[:-1]
         self.pairs = self.pairs+'],  "id": 1}'
-        print(self.first_pair)
-        print(self.pairs)
+        # print(self.first_pair)
+        # print(self.pairs)
 
         self.url = "wss://fstream.binance.com/ws/"  # steam address
 
@@ -101,7 +101,6 @@ class kline:
     def log(self,text):
         with open("log.txt", "a") as myfile:
             now = datetime.datetime.now()
-            # dd/mm/YY H:M:S
             dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
             # print("date and time =", dt_string)
             myfile.write(dt_string + ":" + text + "\r\n")
@@ -255,9 +254,7 @@ class kline:
                 strr = '0' + str(now.minute)
             else:
                 strr = str(now.minute)
-            # print(strr)
             strrr = strr[1:]
-            # print(strrr)
             time.sleep(1)
         print("it's a suitable time!")
 
@@ -267,7 +264,7 @@ class kline:
             cursor.execute(postgreSQL_select_Query)
             symbol_records = cursor.fetchall()
 
-            print(len(symbol_records))
+            # print(len(symbol_records))
             # for row in symbol_records:
             i = 0
             while i < len(symbol_records):
@@ -354,8 +351,8 @@ class kline:
 
             cursor.execute(sql_insert_query, (t,T,s,i,f,L,o,c,h,l,v,n,x,q,V,Q,B))
             self.connection.commit()
-            print("successfull insert : ",t,"----",T,":::",s,":::",c,"===")
-            print(self.convertBT(t))
+            # print("successfull insert : ",t,"----",T,":::",s,":::",c,"===")
+            # print(self.convertBT(t))
         except psycopg2.Error as e:
             print("Unable to connect!")
             print(e.pgerror)
