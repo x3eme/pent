@@ -17,8 +17,8 @@ from btexchange import Btexchange
 
 class Backtest:
     def __init__(self):
-        self.period = 1  # period in months
-        self.start_date = datetime.datetime(2021, 4, 1)
+        self.period = 3  # period in months
+        self.start_date = datetime.datetime(2021, 2, 1)
         self.market_type = "FUTURES"  # FUTURES or SPOT
 
         self.initial_capital = 100  # in USDT
@@ -80,7 +80,7 @@ class Backtest:
 def main():
     pl = Plot()
     threads = []
-    pairs = ["LINKUSDT", "BCHUSDT", "TRXUSDT", "BATUSDT"]
+    pairs = ["TOMOUSDT"]
     for p in pairs:
         bt = Backtest()
         t = Thread(target=bt.run, args=(p,pl))

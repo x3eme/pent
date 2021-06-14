@@ -63,7 +63,7 @@ class Btexchange:
                     else:
                         # print("loss")
                         pnlperc = -abs(round(((po.closePrice - po.entryPrice) / po.entryPrice) * 100, 2))
-
+                    pnlperc -=0.08
                     change_cap_perc = 100 + pnlperc
                     po.unrealizedProfit = pnlperc
                     self.balance = self.balance * (change_cap_perc / 100)

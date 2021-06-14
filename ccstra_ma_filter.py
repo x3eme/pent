@@ -37,11 +37,11 @@ class Strategy:
         self.symbol = sym
         self.ex1 = ex1
         # print(data5min)
-        self.ts = data5min.iloc[19]['timespan1']
-        self.lasto = data5min.iloc[19]['open']
-        self.lasth = data5min.iloc[19]['high']
-        self.lastl = data5min.iloc[19]['low']
-        self.lastc = data5min.iloc[19]['close']
+        self.ts = data5min.iloc[22]['timespan1']
+        self.lasto = data5min.iloc[22]['open']
+        self.lasth = data5min.iloc[22]['high']
+        self.lastl = data5min.iloc[22]['low']
+        self.lastc = data5min.iloc[22]['close']
         # self.candles = "["+str(self.ts)+","+str(self.lasto)+","+str(self.lasth)+","+str(self.lastl)+","+str(self.lastc)+"]"
         self.candle = []
         self.candle.append(self.ts)
@@ -72,26 +72,26 @@ class Strategy:
         # dfh = self.datah
         # CCI Indicator
         # low
-        self.ma1 = self.df.iloc
+        # self.ma1 = self.df.iloc
         try:
             self.avoid = False
             # difff = float(self.df.tail(1)["high"])-float(self.df.tail(1)["low"])
-            iin = 0
-            summ = 0
-            while iin<20:
-                summ += (float(self.df.iloc[iin]["close"]))
-                iin += 1
-            avg = summ/20
-            iin2 = 1
-            summ2 = 0
-            while iin2 < 21:
-                summ2 += (float(self.df.iloc[iin]["close"]))
-                iin2 += 1
-            avg2 = summ2 / 20
+            # iin = 0
+            # summ = 0
+            # while iin<20:
+            #     summ += (float(self.df.iloc[iin]["close"]))
+            #     iin += 1
+            # avg = summ/20
+            # iin2 = 1
+            # summ2 = 0
+            # while iin2 < 21:
+            #     summ2 += (float(self.df.iloc[iin]["close"]))
+            #     iin2 += 1
+            # avg2 = summ2 / 20
             self.letlong = False
-            self.letShort = False
-            self.letlong = (float(self.df.iloc[20]["close"]) > avg) or (float(self.df.iloc[21]["close"]) > avg2)
-            self.letshort = (float(self.df.iloc[20]["close"]) < avg) or (float(self.df.iloc[21]["close"]) < avg2)
+            self.letshort = False
+            # self.letlong = (float(self.df.iloc[20]["close"]) > avg) or (float(self.df.iloc[21]["close"]) > avg2)
+            # self.letshort = (float(self.df.iloc[20]["close"]) < avg) or (float(self.df.iloc[21]["close"]) < avg2)
             # if (difff>3*avg):
             #     self.avoid = True
             self.df["trend_cci_low"] = CCIIndicator(
@@ -129,7 +129,9 @@ class Strategy:
             #     constant=0.015,
             #     fillna=False,
             # ).cci()
-            print(self.df)
+            # print(self.df)
+            self.letlong = float(self.df.iloc[21]["trend_cci"])>0 or float(self.df.iloc[20]["trend_cci"])>0
+            self.letshort = float(self.df.iloc[21]["trend_cci"]) < 0 or float(self.df.iloc[20]["trend_cci"]) < 0
         except:
             print("some errors here")
         try:
