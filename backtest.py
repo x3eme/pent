@@ -5,6 +5,7 @@ import pandas
 import ccstra
 import rsistochstra
 import ccstra_ma_filter
+import ccstra_x2
 from plot import Plot
 import data
 import binance
@@ -17,14 +18,14 @@ from btexchange import Btexchange
 
 class Backtest:
     def __init__(self):
-        self.period = 3  # period in months
-        self.start_date = datetime.datetime(2021, 2, 1)
+        self.period = 1  # period in months
+        self.start_date = datetime.datetime(2021, 5, 1)
         self.market_type = "FUTURES"  # FUTURES or SPOT
 
         self.initial_capital = 100  # in USDT
         self.portion_per_trade = 1  # 1 for all 0.2 for 20 percent
         self.candles_length = 20  # candles strategy needs to decide
-        self.ccstra = ccstra_ma_filter.Strategy()
+        self.ccstra = ccstra_x2.Strategy()
 
     def run(self, pair, pl):
         ex1 = Btexchange()
@@ -59,10 +60,10 @@ class Backtest:
         ind = 0
         while self.go:
             # call
-            sub_df = df.iloc[ind:ind + 23, ]
+            sub_df = df.iloc[ind:ind + 300, ]
             sub_df = sub_df.reindex(index=sub_df.index[::1])
-            ccstra_ma_filter.Strategy().exec(sym=pair, data5min=sub_df, ex1=ex1)
-            if ((ind + 25) > total_rows):
+            ccstra_x2.Strategy().exec(sym=pair, data5min=sub_df, ex1=ex1)
+            if ((ind + 302) > total_rows):
                 self.go = False
             else:
                 ind += 1
@@ -80,7 +81,7 @@ class Backtest:
 def main():
     pl = Plot()
     threads = []
-    pairs = ["TOMOUSDT"]
+    pairs = ["EOSUSDT","XRPUSDT","DODOUSDT"]
     for p in pairs:
         bt = Backtest()
         t = Thread(target=bt.run, args=(p,pl))

@@ -145,14 +145,14 @@ class Data:
     def geth(self,dfi)-> pandas.DataFrame:
         # print(len(dfi))
         dfi = dfi.reindex(index=dfi.index[::-1])
-        dfh = pandas.DataFrame(columns=["t1", "open", "high", "low", "close"])
+        dfh = pandas.DataFrame(columns=["timespan1", "open", "high", "low", "close"])
         # print(dfi.iloc[0]['t1'])
         # print(dfi.iloc[251]['t1'])
         lenn = len(dfi)-1
-        if (float(dfi.iloc[0]['t1']) == float(dfi.iloc[lenn]['t1']+lenn*300000)):
+        if (float(dfi.iloc[0]['timespan1']) == float(dfi.iloc[lenn]['timespan1']+lenn*300000)):
             # print("data is approved")
             ut = util.Util()
-            over = ut.get_5min_order(dfi.iloc[0]['t1'])
+            over = ut.get_5min_order(dfi.iloc[0]['timespan1'])
             # print(over)
 
             ind=int(over)
@@ -165,7 +165,7 @@ class Data:
             while i<j:
                 # bla bla
 
-                dfh.at[ii, 't1'] = dfi.iloc[i*12+ind]['t1']
+                dfh.at[ii, 'timespan1'] = dfi.iloc[i*12+ind]['timespan1']
                 dfh.at[ii, 'open'] = dfi.iloc[i * 12+11+ind]['open']
                 dfh.at[ii, 'close'] = dfi.iloc[i * 12+ind]['close']
                 dfh.at[ii, 'high'] = max([dfi.iloc[i * 12+0+ind]['high'], dfi.iloc[i * 12+1+ind]['high'],
