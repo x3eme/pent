@@ -44,29 +44,55 @@ class Backtest:
             self.conn = sqlite3.connect(self.db_file)
         except self.Error as e:
             print(e)
-        print("loading data ...")
+        print("loading data 5min ...")
         self.cur = self.conn.cursor()
         self.cur.execute(
-            "SELECT timespan1, CAST(open as float) as open ,CAST(high as float) as high ,CAST(low as float) as low ,CAST(close as float) as close,volume FROM " + pair + "_5m where timespan1>" + str(
+            "SELECT timespan1, CAST(open as float) as open ,CAST(high as float) as high ,CAST(low as float) as low ,CAST(close as float) as close,volume,trend_cci FROM " + pair + "_5m_TA where timespan1>" + str(
                 self.start_timespan - 1) + " and timespan1<" + str(self.finish_timespan + 1) + "")
-
         self.rows = self.cur.fetchall()
         print("data loaded ...")
         print(str(len(self.rows)) + " rows loaded!")
         total_rows = len(self.rows)
         df = pandas.DataFrame(self.rows)
         df.columns = [desc[0] for desc in self.cur.description]
+
+        print("loading data 1hour ...")
+        self.cur2 = self.conn.cursor()
+        self.cur2.execute(
+            "SELECT timespan1, CAST(open as float) as open ,CAST(high as float) as high ,CAST(low as float) as low ,CAST(close as float) as close,volume,trend_cci FROM " + pair + "_1h_TA where timespan1>" + str(
+                self.start_timespan - 1) + " and timespan1<" + str(self.finish_timespan + 1) + "")
+        self.rows2 = self.cur2.fetchall()
+        print("data loaded ...")
+        print(str(len(self.rows2)) + " rows loaded!")
+        total_rows2 = len(self.rows2)
+        df2 = pandas.DataFrame(self.rows2)
+        df2.columns = [desc[0] for desc in self.cur2.description]
+
         self.go = True
         ind = 0
         while self.go:
             # call
-            sub_df = df.iloc[ind:ind + 300, ]
+            sub_df = df.iloc[ind:ind + 2, ]
             sub_df = sub_df.reindex(index=sub_df.index[::1])
-            ccstra_x2.Strategy().exec(sym=pair, data5min=sub_df, ex1=ex1)
-            if ((ind + 302) > total_rows):
-                self.go = False
+
+            currenttimestamp = sub_df.iloc[1]["timespan1"]+300000
+            # print(currenttimestamp)
+            sub_df2 = df2[df2['timespan1'] <= currenttimestamp].tail(2)
+
+            if(len(sub_df2) > 1):
+                # print("len bigger than 0")
+                sub_df2 = sub_df2.iloc[0, :]
+                sub_df2 = sub_df2.reindex(index=sub_df2.index[::1])
+                # print(sub_df)
+                # print(sub_df2)
+                ccstra_x2.Strategy().exec(sym=pair, data5min=sub_df, data1hour=sub_df2, ex1=ex1)
+                if ((ind + 3) > total_rows):
+                    self.go = False
+                else:
+                    ind += 1
             else:
                 ind += 1
+                # print("len less than 0")
         # print(datetime.datetime.now())
         pl.plot(ex1.closed_positions, pair, self.start_date)
 
@@ -81,7 +107,7 @@ class Backtest:
 def main():
     pl = Plot()
     threads = []
-    pairs = ["EOSUSDT","XRPUSDT","DODOUSDT"]
+    pairs = ["DENTUSDT"]
     for p in pairs:
         bt = Backtest()
         t = Thread(target=bt.run, args=(p,pl))

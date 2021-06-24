@@ -33,15 +33,20 @@ class Strategy:
 
         self.retval = "-"
 
-    def exec(self, sym, data5min, ex1:Btexchange, ord_log=None, strat_log=None):
+    def exec(self, sym, data5min, data1hour, ex1:Btexchange, ord_log=None, strat_log=None):
+
+
+        # print(data5min)
+        # print(data1hour)
+
         self.symbol = sym
         self.ex1 = ex1
         # print(data5min)
-        self.ts = data5min.iloc[299]['timespan1']
-        self.lasto = data5min.iloc[299]['open']
-        self.lasth = data5min.iloc[299]['high']
-        self.lastl = data5min.iloc[299]['low']
-        self.lastc = data5min.iloc[299]['close']
+        self.ts = data5min.iloc[1]['timespan1']
+        self.lasto = data5min.iloc[1]['open']
+        self.lasth = data5min.iloc[1]['high']
+        self.lastl = data5min.iloc[1]['low']
+        self.lastc = data5min.iloc[1]['close']
         # self.candles = "["+str(self.ts)+","+str(self.lasto)+","+str(self.lasth)+","+str(self.lastl)+","+str(self.lastc)+"]"
         self.candle = []
         self.candle.append(self.ts)
@@ -53,10 +58,12 @@ class Strategy:
         self.symbol = sym.upper()
         datac = data.Data()
         self.data = data5min
-        self.datah = datac.geth(self.data)
-        self.cch = 0
+        # self.datah = data1hour
+        # self.datah = self.data.reindex(index=self.datah.index[::-1])
+        self.cch = data1hour['trend_cci']
         self.cc5l = 0
-        self.cc5n = 0
+        self.cc5n = data5min.iloc[1]['trend_cci']
+        self.ccbb = data5min.iloc[0]['trend_cci']
         self.cc5h = 0
         # self.ex = exch
 
@@ -94,53 +101,53 @@ class Strategy:
             # self.letshort = (float(self.df.iloc[20]["close"]) < avg) or (float(self.df.iloc[21]["close"]) < avg2)
             # if (difff>3*avg):
             #     self.avoid = True
-            self.df["trend_cci_low"] = CCIIndicator(
-                high=self.df['high'],
-                low=self.df['low'],
-                close=self.df['close'],
-                window=20,
-                constant=0.015,
-                fillna=False,
-            ).ccilow()
-            # normal
-            self.df["trend_cci"] = CCIIndicator(
-                high=self.df['high'],
-                low=self.df['low'],
-                close=self.df['close'],
-                window=20,
-                constant=0.015,
-                fillna=False,
-            ).cci()
-            # high
-            self.df["trend_cci_high"] = CCIIndicator(
-                high=self.df['high'],
-                low=self.df['low'],
-                close=self.df['close'],
-                window=20,
-                constant=0.015,
-                fillna=False,
-            ).ccihigh()
-            # normal 1h
-            self.datah["trend_cci"] = CCIIndicator(
-                high=self.datah['high'],
-                low=self.datah['low'],
-                close=self.datah['close'],
-                window=20,
-                constant=0.015,
-                fillna=False,
-            ).cci()
+            # self.df["trend_cci_low"] = CCIIndicator(
+            #     high=self.df['high'],
+            #     low=self.df['low'],
+            #     close=self.df['close'],
+            #     window=20,
+            #     constant=0.015,
+            #     fillna=False,
+            # ).ccilow()
+            # # normal
+            # self.df["trend_cci"] = CCIIndicator(
+            #     high=self.df['high'],
+            #     low=self.df['low'],
+            #     close=self.df['close'],
+            #     window=20,
+            #     constant=0.015,
+            #     fillna=False,
+            # ).cci()
+            # # high
+            # self.df["trend_cci_high"] = CCIIndicator(
+            #     high=self.df['high'],
+            #     low=self.df['low'],
+            #     close=self.df['close'],
+            #     window=20,
+            #     constant=0.015,
+            #     fillna=False,
+            # ).ccihigh()
+            # # normal 1h
+            # self.datah["trend_cci"] = CCIIndicator(
+            #     high=self.datah['high'],
+            #     low=self.datah['low'],
+            #     close=self.datah['close'],
+            #     window=20,
+            #     constant=0.015,
+            #     fillna=False,
+            # ).cci()
             # print(self.df)
             # self.letlong = float(self.df.iloc[21]["trend_cci"])>0 or float(self.df.iloc[20]["trend_cci"])>0
             # self.letshort = float(self.df.iloc[21]["trend_cci"]) < 0 or float(self.df.iloc[20]["trend_cci"]) < 0
         except:
             print("some errors here")
         try:
-            self.cc5l = float(self.df.iloc[299]["trend_cci_low"])
-            self.cc5n = float(self.df.iloc[299]["trend_cci"])
-            self.cc5h = float(self.df.iloc[299]["trend_cci_high"])
-            self.ccbb = float(self.df.iloc[298]["trend_cci"])
-            self.close0 = float(self.df.iloc[299]["close"])
-            self.close1 = float(self.df.iloc[298]["close"])
+            # self.cc5l = float(self.df.iloc[299]["trend_cci_low"])
+            # self.cc5n = float(self.df.iloc[299]["trend_cci"])
+            # self.cc5h = float(self.df.iloc[299]["trend_cci_high"])
+            # self.ccbb = float(self.df.iloc[298]["trend_cci"])
+            self.close0 = float(self.df.iloc[1]["close"])
+            self.close1 = float(self.df.iloc[0]["close"])
             # print(self.cc5l)
             # print(self.cc5n)
             # print(self.cc5h)
@@ -161,8 +168,10 @@ class Strategy:
         # if float(self.cch) > float(200):
         #     self.strat_log.info("possible short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5: " + str(self.cc5l))
         #     print("possible short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5h: " + str(self.cc5h))
-
-        if float(self.cc5l) < float(-200)  and float(self.cch) < float(-200):
+        # print(str(self.candle) + " cci5min: " + str(self.cc5n) + " cci1hour: " + str(self.cch))
+        if (float(self.cc5n) < float(-200)) and float(self.cch) < float(-200):
+            print("going long :")
+            # print(str(self.candle) + " cci5min: " + str(self.cc5n) + " cci1hour: " + str(self.cch))
             # print("{} cci5l {}".format(str(datetime.fromtimestamp(self.candle[0]/1000)),str(self.cc5l)))
             self.ex1.entry(self.symbol,"buy",self.candle,self.lastc)
             # self.strat_log.info("long: " + self.symbol)
@@ -173,7 +182,9 @@ class Strategy:
             # frequency = 2500  # Set Frequency To 2500 Hertz
             # duration = 1000  # Set Duration To 1000 ms == 1 second
             # winsound.Beep(frequency, duration)
-        if float(self.cc5h) > float(200) and float(self.cch) > float(200):
+        if (float(self.cc5n) > float(200)) and float(self.cch) > float(200):
+            print("going short :")
+            # print(str(self.candle) + " cci5min: " + str(self.cc5n) + " cci1hour: " + str(self.cch))
             # print("{} cci5h {}".format(str(datetime.fromtimestamp(self.candle[0]/1000)),str(self.cc5h)))
             self.ex1.entry(self.symbol, "sell", self.candle, self.lastc)
             # print("short: " + self.symbol)

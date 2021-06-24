@@ -20,6 +20,7 @@ class Historical:
         self.mode = "update"#insert
         self.final_date = "04/06/2021"
 
+        self.letgo = False
         if (self.market_type == "spot"):
             self.market = HistoricalKlinesType.SPOT
             self.database = "data.db"
@@ -34,39 +35,56 @@ class Historical:
             self.interval = Client.KLINE_INTERVAL_1HOUR
 
     def add_ta(self,pair,interval):
-        # check if table already exists ??????
-        conn = sqlite3.connect(self.database)
-        c = conn.cursor()
-        c.execute(
-            "SELECT * FROM " + pair + "_" + interval + "_TA")
-        rows = c.fetchall()
-        dfch = pandas.DataFrame(rows)
-        if(len(dfch)>1):
-            # donothing
-            print("doing nothing about : " + pair)
-            # pass
-        else:
-            conn = sqlite3.connect(self.database)
-            c = conn.cursor()
-            c.execute(
-                "SELECT timespan1, CAST(open as float) as open ,CAST(high as float) as high ,CAST(low as float) as low ,CAST(close as float) as close,CAST(volume as float) as volume FROM " + pair + "_" + interval + " order by timespan1")
-            rows = c.fetchall()
-            df = pandas.DataFrame(rows)
-            df.columns = [desc[0] for desc in c.description]
-            # Clean nan values
-            df = utils.dropna(df)
+        self.letgo = True
+        # if(pair == "DGBUSDT"):
+        #     self.letgo = True
+        if(self.letgo):
+            #fix 1inch
+            error = True
+            if pair == '1INCHUSDT':
+                pair = 'A1INCHUSDT'
+            # check if table already exists ??????
+            dfch = pandas.DataFrame()
+            try:
+                conn = sqlite3.connect(self.database)
+                c = conn.cursor()
+                c.execute(
+                    "SELECT * FROM " + pair + "_" + interval + "_TA")
+                rows = c.fetchall()
+                dfch = pandas.DataFrame(rows)
+                error = False
+            except Exception as e:
+                error = True
+            if(len(dfch)>1) and not error:
+                # donothing
+                print("doing nothing about : " + pair)
+                # pass
+            else:
+                try:
+                    print("going for "+ pair)
+                    conn = sqlite3.connect(self.database)
+                    c = conn.cursor()
+                    c.execute(
+                        "SELECT timespan1, CAST(open as float) as open ,CAST(high as float) as high ,CAST(low as float) as low ,CAST(close as float) as close,CAST(volume as float) as volume FROM " + pair + "_" + interval + " order by timespan1")
+                    rows = c.fetchall()
+                    df = pandas.DataFrame(rows)
+                    df.columns = [desc[0] for desc in c.description]
+                    # Clean nan values
+                    df = utils.dropna(df)
 
-            # print(df.columns)
+                    # print(df.columns)
 
-            # Add all ta features filling nans values
-            df = ta.add_all_ta_features(
-                df, "open", "high", "low", "close", "volume", fillna=True
-            )
+                    # Add all ta features filling nans values
+                    df = ta.add_all_ta_features(
+                        df, "open", "high", "low", "close", "volume", fillna=True
+                    )
 
-            # print(df.columns)
-            # print(len(df.columns))
-            # print(df)
-            self.save_data_with_ta(df,pair,interval)
+                    # print(df.columns)
+                    # print(len(df.columns))
+                    # print(df)
+                except Exception as e:
+                    print('Failed to add technical analysis lab to database because of : ' + str(e))
+                self.save_data_with_ta(df,pair,interval)
 
     def get_klines(self,pair):
         self.tts = 1000000000000
@@ -195,5 +213,5 @@ class Historical:
         except:
             pass
 his = Historical()
-his.start_TA("5m")
+his.start_TA("15m")
 # his.start()
