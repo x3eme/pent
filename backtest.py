@@ -18,8 +18,8 @@ from btexchange import Btexchange
 
 class Backtest:
     def __init__(self):
-        self.period = 1  # period in months
-        self.start_date = datetime.datetime(2021, 5, 1)
+        self.period = 5 # period in months
+        self.start_date = datetime.datetime(2021, 1, 1)
         self.market_type = "FUTURES"  # FUTURES or SPOT
 
         self.initial_capital = 100  # in USDT
@@ -72,10 +72,10 @@ class Backtest:
         ind = 0
         while self.go:
             # call
-            sub_df = df.iloc[ind:ind + 2, ]
+            sub_df = df.iloc[ind:ind + 22, ]
             sub_df = sub_df.reindex(index=sub_df.index[::1])
 
-            currenttimestamp = sub_df.iloc[1]["timespan1"]+300000
+            currenttimestamp = sub_df.iloc[21]["timespan1"]+300000
             # print(currenttimestamp)
             sub_df2 = df2[df2['timespan1'] <= currenttimestamp].tail(2)
 
@@ -86,7 +86,7 @@ class Backtest:
                 # print(sub_df)
                 # print(sub_df2)
                 ccstra_x2.Strategy().exec(sym=pair, data5min=sub_df, data1hour=sub_df2, ex1=ex1)
-                if ((ind + 3) > total_rows):
+                if ((ind + 23) > total_rows):
                     self.go = False
                 else:
                     ind += 1
@@ -107,7 +107,7 @@ class Backtest:
 def main():
     pl = Plot()
     threads = []
-    pairs = ["DENTUSDT"]
+    pairs = ["BNBUSDT", "YFIUSDT", "DOTUSDT", "ATOMUSDT"]
     for p in pairs:
         bt = Backtest()
         t = Thread(target=bt.run, args=(p,pl))

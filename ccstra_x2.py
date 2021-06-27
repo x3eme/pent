@@ -37,16 +37,18 @@ class Strategy:
 
 
         # print(data5min)
+        # print("-----")
         # print(data1hour)
+        # print("-------------------------")
 
         self.symbol = sym
         self.ex1 = ex1
         # print(data5min)
-        self.ts = data5min.iloc[1]['timespan1']
-        self.lasto = data5min.iloc[1]['open']
-        self.lasth = data5min.iloc[1]['high']
-        self.lastl = data5min.iloc[1]['low']
-        self.lastc = data5min.iloc[1]['close']
+        self.ts = data5min.iloc[21]['timespan1']
+        self.lasto = data5min.iloc[21]['open']
+        self.lasth = data5min.iloc[21]['high']
+        self.lastl = data5min.iloc[21]['low']
+        self.lastc = data5min.iloc[21]['close']
         # self.candles = "["+str(self.ts)+","+str(self.lasto)+","+str(self.lasth)+","+str(self.lastl)+","+str(self.lastc)+"]"
         self.candle = []
         self.candle.append(self.ts)
@@ -80,9 +82,24 @@ class Strategy:
         # CCI Indicator
         # low
         # self.ma1 = self.df.iloc
+        self.calenma = 0.0
         try:
             self.avoid = False
-            # difff = float(self.df.tail(1)["high"])-float(self.df.tail(1)["low"])
+
+            self.canlenma = (abs(self.data.iloc[21]['close']-self.data.iloc[21]['open'])/self.data.iloc[21]['close']*100)+\
+                (abs(self.data.iloc[20]['close'] - self.data.iloc[20]['open']) / self.data.iloc[20]['close'] * 100) + \
+                (abs(self.data.iloc[19]['close'] - self.data.iloc[19]['open']) / self.data.iloc[19]['close'] * 100) + \
+                (abs(self.data.iloc[18]['close'] - self.data.iloc[18]['open']) / self.data.iloc[18]['close'] * 100) + \
+                (abs(self.data.iloc[17]['close'] - self.data.iloc[17]['open']) / self.data.iloc[17]['close'] * 100) + \
+                (abs(self.data.iloc[16]['close'] - self.data.iloc[16]['open']) / self.data.iloc[16]['close'] * 100) + \
+                (abs(self.data.iloc[15]['close'] - self.data.iloc[15]['open']) / self.data.iloc[15]['close'] * 100) + \
+                (abs(self.data.iloc[14]['close'] - self.data.iloc[14]['open']) / self.data.iloc[14]['close'] * 100) + \
+                (abs(self.data.iloc[13]['close'] - self.data.iloc[13]['open']) / self.data.iloc[13]['close'] * 100) + \
+                (abs(self.data.iloc[12]['close'] - self.data.iloc[12]['open']) / self.data.iloc[12]['close'] * 100) + \
+                (abs(self.data.iloc[11]['close'] - self.data.iloc[11]['open']) / self.data.iloc[11]['close'] * 100) + \
+                (abs(self.data.iloc[10]['close'] - self.data.iloc[10]['open']) / self.data.iloc[10]['close'] * 100)
+            self.calenma = self.calenma / 12
+                # difff = float(self.df.tail(1)["high"])-float(self.df.tail(1)["low"])
             # iin = 0
             # summ = 0
             # while iin<20:
@@ -101,33 +118,33 @@ class Strategy:
             # self.letshort = (float(self.df.iloc[20]["close"]) < avg) or (float(self.df.iloc[21]["close"]) < avg2)
             # if (difff>3*avg):
             #     self.avoid = True
-            # self.df["trend_cci_low"] = CCIIndicator(
-            #     high=self.df['high'],
-            #     low=self.df['low'],
-            #     close=self.df['close'],
-            #     window=20,
-            #     constant=0.015,
-            #     fillna=False,
-            # ).ccilow()
-            # # normal
-            # self.df["trend_cci"] = CCIIndicator(
-            #     high=self.df['high'],
-            #     low=self.df['low'],
-            #     close=self.df['close'],
-            #     window=20,
-            #     constant=0.015,
-            #     fillna=False,
-            # ).cci()
-            # # high
-            # self.df["trend_cci_high"] = CCIIndicator(
-            #     high=self.df['high'],
-            #     low=self.df['low'],
-            #     close=self.df['close'],
-            #     window=20,
-            #     constant=0.015,
-            #     fillna=False,
-            # ).ccihigh()
-            # # normal 1h
+            self.df["trend_cci_low"] = CCIIndicator(
+                high=self.df['high'],
+                low=self.df['low'],
+                close=self.df['close'],
+                window=20,
+                constant=0.015,
+                fillna=False,
+            ).ccilow()
+            # normal
+            self.df["trend_cci"] = CCIIndicator(
+                high=self.df['high'],
+                low=self.df['low'],
+                close=self.df['close'],
+                window=20,
+                constant=0.015,
+                fillna=False,
+            ).cci()
+            # high
+            self.df["trend_cci_high"] = CCIIndicator(
+                high=self.df['high'],
+                low=self.df['low'],
+                close=self.df['close'],
+                window=20,
+                constant=0.015,
+                fillna=False,
+            ).ccihigh()
+            # normal 1h
             # self.datah["trend_cci"] = CCIIndicator(
             #     high=self.datah['high'],
             #     low=self.datah['low'],
@@ -139,18 +156,22 @@ class Strategy:
             # print(self.df)
             # self.letlong = float(self.df.iloc[21]["trend_cci"])>0 or float(self.df.iloc[20]["trend_cci"])>0
             # self.letshort = float(self.df.iloc[21]["trend_cci"]) < 0 or float(self.df.iloc[20]["trend_cci"]) < 0
-        except:
+        except self.Error as e:
+            print(e)
             print("some errors here")
         try:
-            # self.cc5l = float(self.df.iloc[299]["trend_cci_low"])
-            # self.cc5n = float(self.df.iloc[299]["trend_cci"])
-            # self.cc5h = float(self.df.iloc[299]["trend_cci_high"])
-            # self.ccbb = float(self.df.iloc[298]["trend_cci"])
-            self.close0 = float(self.df.iloc[1]["close"])
-            self.close1 = float(self.df.iloc[0]["close"])
+            self.cc5l = float(self.df.iloc[21]["trend_cci_low"])
+            self.cc5n = float(self.df.iloc[21]["trend_cci"])
+            self.cc5h = float(self.df.iloc[21]["trend_cci_high"])
+            self.ccbb = float(self.df.iloc[20]["trend_cci"])
+            self.close0 = float(self.df.iloc[21]["close"])
+            self.close1 = float(self.df.iloc[20]["close"])
+            # print (self.canlenma)
             # print(self.cc5l)
             # print(self.cc5n)
             # print(self.cc5h)
+            # print(self.df)
+            # print(self.cch)
             # self.cch = float(self.datah.tail(1)["trend_cci"])
         except:
             print("some errors in convert...")
@@ -162,14 +183,20 @@ class Strategy:
         self.retval = "-"
         self.ex1.update(self.candle)
         # try:
-        # if float(self.cc5h) < float(-220):
-        #     self.strat_log.info("possible long: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5: " + str(self.cc5h))
-        #     print("possible long: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5l: " + str(self.cc5l))
-        # if float(self.cch) > float(200):
+        # if float(self.cch) < float(-200) and float(self.cc5l)<float(-200):
+        #     print("possible long : "+str(self.candle) + " cci5min: " + str(self.cc5n) + " cci1hour: " + str(
+        #         self.cch) + "candle length ma : " + str(self.canlenma))
+        #
+        # #     self.strat_log.info("possible long: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5: " + str(self.cc5h))
+        # #     print("possible long: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5l: " + str(self.cc5l))
+        # if float(self.cch) > float(200) and float(self.cc5h) > float(200):
+        #     print("possible short : "+str(self.candle) + " cci5min: " + str(self.cc5n) + " cci1hour: " + str(
+        #         self.cch) + "candle length ma : " + str(self.canlenma))
+
         #     self.strat_log.info("possible short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5: " + str(self.cc5l))
         #     print("possible short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5h: " + str(self.cc5h))
-        # print(str(self.candle) + " cci5min: " + str(self.cc5n) + " cci1hour: " + str(self.cch))
-        if (float(self.cc5n) < float(-200)) and float(self.cch) < float(-200):
+        # print(str(self.candle) + " cci5min: " + str(self.cc5n) + " cci1hour: " + str(self.cch) + "candle length ma : " + str(self.canlenma))
+        if float(self.cc5l) < float(-200) and float(self.cch) < float(-200) and float(self.canlenma) > 1.0:
             print("going long :")
             # print(str(self.candle) + " cci5min: " + str(self.cc5n) + " cci1hour: " + str(self.cch))
             # print("{} cci5l {}".format(str(datetime.fromtimestamp(self.candle[0]/1000)),str(self.cc5l)))
@@ -182,7 +209,7 @@ class Strategy:
             # frequency = 2500  # Set Frequency To 2500 Hertz
             # duration = 1000  # Set Duration To 1000 ms == 1 second
             # winsound.Beep(frequency, duration)
-        if (float(self.cc5n) > float(200)) and float(self.cch) > float(200):
+        if float(self.cc5h) > float(200) and float(self.cch) > float(200) and float(self.canlenma) > 1.0:
             print("going short :")
             # print(str(self.candle) + " cci5min: " + str(self.cc5n) + " cci1hour: " + str(self.cch))
             # print("{} cci5h {}".format(str(datetime.fromtimestamp(self.candle[0]/1000)),str(self.cc5h)))
