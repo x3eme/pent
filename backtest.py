@@ -107,7 +107,7 @@ class Backtest:
 def main():
     pl = Plot()
     threads = []
-    pairs = ["BNBUSDT", "YFIUSDT", "DOTUSDT", "ATOMUSDT"]
+    pairs = ["BNBUSDT", "YFIUSDT", "XTZUSDT", "FILUSDT"]
     for p in pairs:
         bt = Backtest()
         t = Thread(target=bt.run, args=(p,pl))

@@ -1,8 +1,8 @@
 
 import data
-import hcstra
+import hcstra_2
 from exchange import Exchange
-import winsound
+# import winsound
 import logging
 import time
 import traceback
@@ -11,9 +11,10 @@ import traceback
 
 class main:
     def __init__(self):
-        frequency = 2500  # Set Frequency To 2500 Hertz
-        duration = 1000  # Set Duration To 1000 ms == 1 second
-        winsound.Beep(frequency, duration)
+        # frequency = 2500  # Set Frequency To 2500 Hertz
+        # duration = 1000  # Set Duration To 1000 ms == 1 second
+        # winsound.Beep(frequency, duration)
+        self.hcs = hcstra_2.Strategy()
         pass
     def run(self):
         cnt = 0
@@ -37,7 +38,8 @@ class main:
             self.my_data = data.Data()
             self.exch = Exchange(self.ord_log)
 
-            self.symbol_records = self.my_data.get_symbols()
+            # self.symbol_records = self.my_data.get_symbols()
+            self.symbol_records = ["DOTUSDT", "XRPUSDT", "BNBUSDT", "DENTUSDT", "IOSTUSDT", "XEMUSDT", "THETAUSDT", "YFIUSDT", "HOTUSDT", "ICXUSDT", "NKNUSDT"]
             cnt = len(self.symbol_records)
             # print(self.symbol_records)
         except Exception as e:
@@ -57,15 +59,16 @@ class main:
                 print("------------------------------------------------")
                 ii = 0
                 while ii < cnt:
-                    ssyy = self.symbol_records[ii][0].upper()
-                    hcs = hcstra.Strategy(ssyy, self.my_data.get_5min_by_symbol(ssyy), self.exch, self.ord_log, self.strat_log)
-                    hcs.exec()
+                    # ssyy = self.symbol_records[ii][0].upper()
+                    ssyy = self.symbol_records[ii].upper()
+                    # hcstra2.Strategy(ssyy, self.my_data.get_5min_by_symbol(ssyy), self.exch, self.ord_log, self.strat_log)
+                    self.hcs.exec(sym=ssyy, data5min=self.my_data.get_5min_by_symbol(ssyy), ex1=self.exch, ord_log=self.ord_log, strat_log=self.strat_log)
                     ii += 1
                 wait_sec = 0
             except Exception as e:
-                frequency = 2500  # Set Frequency To 2500 Hertz
-                duration = 1000  # Set Duration To 1000 ms == 1 second
-                winsound.Beep(frequency, duration)
+                # frequency = 2500  # Set Frequency To 2500 Hertz
+                # duration = 1000  # Set Duration To 1000 ms == 1 second
+                # winsound.Beep(frequency, duration)
                 print('There was an error during main loop: ' + str(e))
                 traceback.print_exc()
                 if wait_sec<10:

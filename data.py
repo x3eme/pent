@@ -43,7 +43,7 @@ class Data:
         ts2 = int(ts1*1000)
         db_timespan = self.all_data.iloc[0]['t1']
         time_lag = int((ts2-int(db_timespan))/60000)
-        if time_lag < 7:
+        if time_lag < 30:
             live = True
         else:
             print("we have backwardness : ", time_lag, " Minutes!")
@@ -61,7 +61,7 @@ class Data:
         try:
             conn = self.dbconnect()
             cursor = conn.cursor()
-            postgreSQL_select_Query = "SELECT t1, o7 as Open,h9 as High,l10 as Low,c8 as Close,v11 as Volume FROM klines WHERE s3 = '{}'  order by t1 desc LIMIT 252 ".format(self.symbol)#and x13='true'
+            postgreSQL_select_Query = "SELECT t1, o7 as Open,h9 as High,l10 as Low,c8 as Close,v11 as Volume FROM klines WHERE s3 = '{}' and x13='true' order by t1 desc LIMIT 252 ".format(self.symbol)#and x13='true'
             cursor.execute(postgreSQL_select_Query)
             kline_records = cursor.fetchall()
             df = pandas.DataFrame(kline_records)
@@ -99,7 +99,7 @@ class Data:
         try:
             conn = self.dbconnect()
             cursor = conn.cursor()
-            postgreSQL_select_Query = "SELECT t1,s3, o7 as Open,h9 as High,l10 as Low,c8 as Close,v11 as Volume FROM klines  order by t1 desc LIMIT 27720 " #WHERE x13='true'
+            postgreSQL_select_Query = "SELECT t1,s3, o7 as Open,h9 as High,l10 as Low,c8 as Close,v11 as Volume FROM klines WHERE x13='true' order by t1 desc LIMIT 27720 " #WHERE x13='true'
             cursor.execute(postgreSQL_select_Query)
             kline_records = cursor.fetchall()
             df = pandas.DataFrame(kline_records)
@@ -145,14 +145,14 @@ class Data:
     def geth(self,dfi)-> pandas.DataFrame:
         # print(len(dfi))
         dfi = dfi.reindex(index=dfi.index[::-1])
-        dfh = pandas.DataFrame(columns=["timespan1", "open", "high", "low", "close"])
+        dfh = pandas.DataFrame(columns=["t1", "open", "high", "low", "close"])
         # print(dfi.iloc[0]['t1'])
         # print(dfi.iloc[251]['t1'])
         lenn = len(dfi)-1
-        if (float(dfi.iloc[0]['timespan1']) == float(dfi.iloc[lenn]['timespan1']+lenn*300000)):
+        if (float(dfi.iloc[0]['t1']) == float(dfi.iloc[lenn]['t1']+lenn*300000)):
             # print("data is approved")
             ut = util.Util()
-            over = ut.get_5min_order(dfi.iloc[0]['timespan1'])
+            over = ut.get_5min_order(dfi.iloc[0]['t1'])
             # print(over)
 
             ind=int(over)
@@ -165,7 +165,7 @@ class Data:
             while i<j:
                 # bla bla
 
-                dfh.at[ii, 'timespan1'] = dfi.iloc[i*12+ind]['timespan1']
+                dfh.at[ii, 't1'] = dfi.iloc[i*12+ind]['t1']
                 dfh.at[ii, 'open'] = dfi.iloc[i * 12+11+ind]['open']
                 dfh.at[ii, 'close'] = dfi.iloc[i * 12+ind]['close']
                 dfh.at[ii, 'high'] = max([dfi.iloc[i * 12+0+ind]['high'], dfi.iloc[i * 12+1+ind]['high'],
