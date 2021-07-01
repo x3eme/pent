@@ -41,6 +41,7 @@ class Exchange:
         self.order_size = 500
         self.allowed_balance = 250
         self.stop_loss_perc = 5
+
         self.open_positions = []
         self.pair_balance = []
         self.update_open_positions()

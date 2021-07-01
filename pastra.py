@@ -8,6 +8,9 @@ from exchange import Exchange
 import logging
 from btexchange import Btexchange
 
+from ta.volatility import (
+    AverageTrueRange
+)
 
 from hta import (
     MACD,
@@ -58,23 +61,83 @@ class Strategy:
         self.candle.append(self.lastc)
 
         self.symbol = sym.upper()
-        datac = data.Data()
+        # datac = data.Data()
         self.data = data5min
-        self.datah = datac.geth(self.data)
-        # self.datah = self.datah.reindex(index=self.datah.index[::-1])
+        ########################################################################################
+        # strategy variables :
+        self.usr_risk = 3.0
+        self.atr_mult = 0.5
+        self.sma_slow = 99
+        self.sma_med = 25
+        self.sma_fast = 7
 
-        # self.cch = data1hour['trend_cci']
-        self.cc5l = 0
-        self.cc5n = 0
-        self.ccbb = 0
-        self.cc5h = 0
-        # self.ex = exch
+        # strategy conditions :
+        # find pinbars in a candle
+        self.bullishPinBar = (self.lastc > self.lasto and (self.lasto - self.lastl) > 0.66 * (
+                self.lasth - self.lastl)) or (self.lastc < self.lasto and (self.lastc - self.lastl) > 0.66 * (
+                self.lasth - self.lastl))
+        self.bearishPinBar = (self.lastc > self.lasto and (self.lasth - self.lastc) > 0.66 * (
+                    self.lasth - self.lastl)) or (self.lastc < self.lasto and (self.lasth - self.lasto) > 0.66 * (
+                    self.lasth - self.lastl))
+
+        # check if we are in an uptrend or downtrend
+        sum1 = 0.0
+        sum2 = 0.0
+        sum3 = 0.0
+        index = 0
+        while index<99:
+            if index<7:
+               sum1 += data5min.iloc[251-index]['close']
+               sum2 += data5min.iloc[251 - index]['close']
+               sum3 += data5min.iloc[251 - index]['close']
+            if index>=7 and index<25:
+               sum2 += data5min.iloc[251 - index]['close']
+               sum3 += data5min.iloc[251 - index]['close']
+            if index>=25 and index<99:
+               sum3 += data5min.iloc[251 - index]['close']
+            index += 1
+        self.ma7 = sum1 / 7
+        self.ma25 = sum2 / 25
+        self.ma99 = sum3 / 99
+        self.upTrend = self.ma7 > self.ma25 and self.ma25 > self.ma99
+        self.dnTrend = self.ma7 < self.ma25 and self.ma25 < self.ma99
+
+        # now lets check some piercing a candle in a MA :
+        self.bullPierce = (self.lastl < self.ma7 and self.lasto > self.ma7 and self.lastc > self.ma7) or (
+                self.lastl < self.ma25 and self.lasto > self.ma25 and self.lastc > self.ma25) or (
+                                self.lastl < self.ma99 and self.lasto > self.ma99 and self.lastc > self.ma99)
+        self.bearPierce = (self.lasth > self.ma7 and self.lasto < self.ma7 and self.lastc < self.ma7) or (
+                self.lasth > self.ma25 and self.lasto < self.ma25 and self.lastc < self.ma25) or (
+                                  self.lasth > self.ma99 and self.lasto < self.ma99 and self.lastc < self.ma99)
+
+        # Final long short condition :
+        self.logCondition = self.bullishPinBar and self.upTrend and self.bullPierce
+        self.shortCondition = self.bearishPinBar and self.dnTrend and self.bearPierce
+
+        # now lets calculate ATR :
+        self.df = self.data
+        self.df["atr"] = AverageTrueRange(
+            high=self.df['high'],
+            low=self.df['low'],
+            close=self.df['close'],
+            window=14,
+            fillna=False,
+        ).average_true_range()
+
+        # Amount and Entry and Stoploss :
+        risk = self.usr_risk * 0.01 * 10 # 10 is strategy equity
+        self.sl = self.df.iloc[250]['low'] - (self.df.iloc[250]['atr'] * self.atr_mult)
+        self.entry = self.df.iloc[250]['high']
+        self.amount = risk / (self.entry - self.sl)
+
+
+
 
         self.ord_log = ord_log
         self.strat_log = strat_log
-        self.ta()
+        # self.ta()
         self.decide()
-        self.update_positions()
+        # self.update_positions()
 
     def ta(self):
         self.df = self.data
@@ -179,43 +242,24 @@ class Strategy:
         except:
             print("some errors in convert...")
     def decide(self):
-        # self.update_positions()
         try:
-            if float(self.cch) < float(-200):
-                self.strat_log.info("possible long: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5: " + str(self.cc5h))
-                # print("possible long: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5l: " + str(self.cc5l))
-            if float(self.cch) > float(200):
-                self.strat_log.info("possible short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5: " + str(self.cc5l))
-                # print("possible short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5h: " + str(self.cc5h))
-
-
-            if float(self.cc5l) < float(-200) and float(self.cch) < float(-200) and float(self.canlenma) > 1.0:
-                print("symbol : " + self.symbol + "---cci hourly : " + str(self.cch) + " ---cci5s : " + str(
-                    self.cc5l) + "-" + str(self.cc5n) + "-" + str(self.cc5h) + " ---candle lengh ma : " + str(
-                    self.canlenma))
-
+            if self.logCondition:
                 self.strat_log.info("long: " + self.symbol)
                 print("long: " + self.symbol)
-                self.ex1.open_long(self.symbol)
+                # self.ex1.open_long(self.symbol)
 
-            if float(self.cc5h) > float(200) and float(self.cch) > float(200) and float(self.canlenma) > 1.0:
-                print("symbol : " + self.symbol + "---cci hourly : " + str(self.cch) + " ---cci5s : " + str(
-                    self.cc5l) + "-" + str(self.cc5n) + "-" + str(self.cc5h) + " ---candle lengh ma : " + str(
-                    self.canlenma))
-
+            if self.shortCondition:
                 print("short: " + self.symbol)
                 self.strat_log.info("short: " + self.symbol)
-                self.ex1.open_short(self.symbol)
-
-
+                # self.ex1.open_short(self.symbol)
         except:
             pass
 
     def update_positions(self):
-        if (float(self.cc5n) < 0 and float(self.ccbb) > 0) or (float(self.cc5n) >0 and float(self.cc5n)>float(self.ccbb) and self.close0<self.close1):
+        if (not self.upTrend):
             self.ex1.close_long(self.symbol)
             pass
 
-        if (float(self.cc5n) > 0 and float(self.ccbb) < 0) or (float(self.cc5n) <0 and float(self.cc5n)<float(self.ccbb) and self.close0>self.close1):
+        if (not self.dnTrend):
             self.ex1.close_short(self.symbol)
             pass

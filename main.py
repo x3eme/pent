@@ -6,6 +6,7 @@ from exchange import Exchange
 import logging
 import time
 import traceback
+import pastra
 
 
 
@@ -15,6 +16,7 @@ class main:
         # duration = 1000  # Set Duration To 1000 ms == 1 second
         # winsound.Beep(frequency, duration)
         self.hcs = hcstra_2.Strategy()
+        self.pas = pastra.Strategy()
         pass
     def run(self):
         cnt = 0
