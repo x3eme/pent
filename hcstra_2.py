@@ -157,8 +157,8 @@ class Strategy:
             # print(self.df)
             # self.letlong = float(self.df.iloc[21]["trend_cci"])>0 or float(self.df.iloc[20]["trend_cci"])>0
             # self.letshort = float(self.df.iloc[21]["trend_cci"]) < 0 or float(self.df.iloc[20]["trend_cci"]) < 0
-        except self.Error as e:
-            print(e)
+        except :
+            # print(e)
             print("some errors here")
         try:
             self.cc5l = float(self.df.iloc[251]["trend_cci_low"])
@@ -183,16 +183,13 @@ class Strategy:
         try:
             if float(self.cch) < float(-200):
                 self.strat_log.info("possible long: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5: " + str(self.cc5h))
-                # print("possible long: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5l: " + str(self.cc5l))
+                print("possible long: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5l: " + str(self.cc5l))
             if float(self.cch) > float(200):
                 self.strat_log.info("possible short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5: " + str(self.cc5l))
-                # print("possible short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5h: " + str(self.cc5h))
+                print("possible short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5h: " + str(self.cc5h))
 
 
-
-
-
-            if float(self.cc5l) < float(-200) and float(self.cch) < float(-200) and float(self.canlenma) > 1.0:
+            if float(self.cc5l) < float(-200) and float(self.cch) < float(-50): # and float(self.canlenma) > 1.0:
                 print("symbol : " + self.symbol + "---cci hourly : " + str(self.cch) + " ---cci5s : " + str(
                     self.cc5l) + "-" + str(self.cc5n) + "-" + str(self.cc5h) + " ---candle lengh ma : " + str(
                     self.canlenma))
@@ -201,7 +198,7 @@ class Strategy:
                 print("long: " + self.symbol)
                 self.ex1.open_long(self.symbol)
 
-            if float(self.cc5h) > float(200) and float(self.cch) > float(200) and float(self.canlenma) > 1.0:
+            if float(self.cc5h) > float(200) and float(self.cch) > float(50): # and float(self.canlenma) > 1.0:
                 print("symbol : " + self.symbol + "---cci hourly : " + str(self.cch) + " ---cci5s : " + str(
                     self.cc5l) + "-" + str(self.cc5n) + "-" + str(self.cc5h) + " ---candle lengh ma : " + str(
                     self.canlenma))

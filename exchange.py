@@ -11,9 +11,9 @@ def same_symbol(symbol_a, symbol_b):
     symbol2 = symbol_a.replace("/", "")
     return True if symbol1 == symbol_b or symbol2 == symbol_b else False
 
-
 class Exchange:
     ### API
+
 
     def __init__(self, logger=None):
         with open('conf.txt', 'r') as file:
@@ -50,8 +50,6 @@ class Exchange:
 
     def get_avail_balance(self, symbol):
         pass
-
-
 
     def update_open_positions(self):
         balance = self.getBalance()
@@ -238,7 +236,7 @@ class Exchange:
         elif type == 'market':
             amount = (self.leverage*spend)/last_price
 
-        print("here.. {} {} {}".format(amount, type, last_price))
+        print("to open.. {} {} {}".format(amount, type, last_price))
 
 
         pos = Position(symbol, side, amount, self.leverage, last_price)

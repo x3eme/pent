@@ -78,7 +78,6 @@ class Btexchange:
                     print("balance: " + str(self.balance) + "(" + str(round(pnlperc, 2)) + ")")
                     # print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
 
-
     def update(self, candle):
         for p in self.positions:
             if p.side == "buy":
