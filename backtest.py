@@ -22,6 +22,7 @@ class Backtest:
         self.start_date = datetime.datetime(2021, 1, 1)
         self.market_type = "FUTURES"  # FUTURES or SPOT
 
+
         self.initial_capital = 100  # in USDT
         self.portion_per_trade = 1  # 1 for all 0.2 for 20 percent
         self.candles_length = 20  # candles strategy needs to decide

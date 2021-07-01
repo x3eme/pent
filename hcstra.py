@@ -36,9 +36,9 @@ class Strategy:
         self.cc5n = 0
         self.cc5h = 0
         self.ex = exch
-
         self.ord_log = ord_log
         self.strat_log = strat_log
+
 
     def exec(self):
         self.ta()

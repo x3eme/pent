@@ -18,8 +18,8 @@ class Plot:
 
     def export(self):
         now = datetime.now()
-        dt_string = now.strftime("%Y-%m-%d %H::%M::%S")
-        plotly.offline.plot(self.fig, filename='backtest\{}.html'.format(dt_string), auto_open=False)
+        dt_string = now.strftime("%Y-%m-%d-%H-%M-%S")
+        plotly.offline.plot(self.fig, filename='{}.html'.format(dt_string), auto_open=False)
 
 
 
