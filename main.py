@@ -41,6 +41,7 @@ class main:
             self.exch = Exchange(self.ord_log)
 
             # self.symbol_records = self.my_data.get_symbols()
+
             self.symbol_records = ["DOTUSDT", "XRPUSDT", "BNBUSDT", "DENTUSDT", "IOSTUSDT", "XEMUSDT", "THETAUSDT", "YFIUSDT", "HOTUSDT", "ICXUSDT", "NKNUSDT"]
             cnt = len(self.symbol_records)
             # print(self.symbol_records)

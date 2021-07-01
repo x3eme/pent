@@ -189,6 +189,7 @@ class Strategy:
                 # print("possible short: " + str(self.symbol) + " cci60: " + str(self.cch) + " cci5h: " + str(self.cc5h))
 
 
+
             if float(self.cc5l) < float(-200) and float(self.cch) < float(-200) and float(self.canlenma) > 1.0:
                 print("symbol : " + self.symbol + "---cci hourly : " + str(self.cch) + " ---cci5s : " + str(
                     self.cc5l) + "-" + str(self.cc5n) + "-" + str(self.cc5h) + " ---candle lengh ma : " + str(
