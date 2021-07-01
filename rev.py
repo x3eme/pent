@@ -352,6 +352,7 @@ class kline:
             cursor.execute(sql_insert_query, (t,T,s,i,f,L,o,c,h,l,v,n,x,q,V,Q,B))
             self.connection.commit()
             # print("successfull insert : ",t,"----",T,":::",s,":::",c,"===")
+            # print("data updated")
             # print(self.convertBT(t))
         except psycopg2.Error as e:
             print("Unable to connect!")
