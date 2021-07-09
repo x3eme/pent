@@ -26,7 +26,7 @@ class Exchange:
 
             self.binance_api_key = data[5]
             self.binance_api_secret = data[6]
-        self.binance  = ccxt.binance({
+        self.binance = ccxt.binance({
             'apiKey': self.binance_api_key,
             'secret': self.binance_api_secret,
             'enableRateLimit': True,  # https://github.com/ccxt/ccxt/wiki/Manual#rate-limit
@@ -195,8 +195,8 @@ class Exchange:
         side = "buy" if pos.side == "sell" else "sell"
 
 
-        stop_price_for_short = pos.entryPrice * 1.03
-        stop_price_for_long = pos.entryPrice * 0.97
+        stop_price_for_short = pos.entryPrice * 1.01
+        stop_price_for_long = pos.entryPrice * 0.99
 
         symbol = pos.symbol.replace("/","").replace("USDT", "/USDT")
         pos_amt = abs(float(pos.positionAmt))
@@ -315,6 +315,7 @@ class Exchange:
         #         haveOpenOrder = True
 
         #get open positions for this symbol
+        self.update_open_positions()
         positions = self.get_open_positions(symbol)
 
         for pos in positions:
@@ -357,6 +358,7 @@ class Exchange:
         #         haveOpenOrder = True
 
         #get open positions for this symbol
+        self.update_open_positions()
         positions = self.get_open_positions(symbol)
 
         for pos in positions:
