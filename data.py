@@ -99,7 +99,7 @@ class Data:
         try:
             conn = self.dbconnect()
             cursor = conn.cursor()
-            postgreSQL_select_Query = "SELECT t1,s3, o7 as Open,h9 as High,l10 as Low,c8 as Close,v11 as Volume FROM klines WHERE x13='true' order by t1 desc LIMIT 27720 " #WHERE x13='true'
+            postgreSQL_select_Query = "SELECT t1,s3, o7 as Open,h9 as High,l10 as Low,c8 as Close,v11 as Volume FROM klines order by t1 desc LIMIT 11220 " #WHERE x13='true'
             cursor.execute(postgreSQL_select_Query)
             kline_records = cursor.fetchall()
             df = pandas.DataFrame(kline_records)
