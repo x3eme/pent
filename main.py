@@ -43,7 +43,7 @@ class main:
 
             # self.symbol_records = self.my_data.get_symbols()
 
-            self.symbol_records = ["AAVEUSDT", "BCHUSDT", "BNBUSDT", "DENTUSDT", "EOSUSDT", "ETCUSDT", "FTMUSDT", "ICXUSDT", "LITUSDT", "NKNUSDT", "OMGUSDT", "REEFUSDT", "RENUSDT", "ZRXUSDT", "FLMUSDT", "KSMUSDT", "LUNAUSDT"]
+            self.symbol_records = ["AAVEUSDT", "BCHUSDT", "BNBUSDT", "EOSUSDT", "ETCUSDT", "FTMUSDT", "LITUSDT", "OMGUSDT", "REEFUSDT", "RENUSDT", "FLMUSDT", "NEOUSDT", "LUNAUSDT", "SNXUSDT"]
             # self.symbol_records = ["AAVEUSDt"]
             self.c3 = candles3.Strategy(self.symbol_records)
             cnt = len(self.symbol_records)
