@@ -24,11 +24,18 @@ class Btexchange:
         # print("entry {} {}".format(symbol, side))
         found = False
         # if price is not defined assume we trade at close ce
+
+        timestamp = candle[0]
+        open = float(candle[1])
+        high = float(candle[2])
+        low = float(candle[3])
+        close = float(candle[4])
+
         if price == None:
-            price = candle[4]
+            price = close
 
         # candle [timestamp, o,h,l,c]
-        if price <= float(candle[2]) and price >= float(candle[3]):
+        if price <= high and price >= low:
 
             # find existing open position if there is any...
             for p in self.positions:
@@ -37,7 +44,7 @@ class Btexchange:
                     # if same trad
                     if p.side != side:
                         # print("open {} {} found. found an opposite {} position. first close. then open".format(side, symbol, p.side))
-                        self.close(symbol, "sell" if side == "buy" else "buy", candle)
+                        self.close(symbol, "sell" if side == "buy" else "buy", candle, price)
                         # print("open position close now open price: {}".format(price))
                         self.entry(symbol, side, candle, price)
                     else:
@@ -45,8 +52,9 @@ class Btexchange:
             if not found:
                 # symbol, side, timestamp, positionAmt, leverage, entryPrice, unrealizedProfit = None
                 # print("++New. open {} price: {}".format(side, price))
-                pos = Btposition(symbol, side, candle[0], self.getPosAmt(), self.leverage, price)
+                pos = Btposition(symbol, side, timestamp, self.getPosAmt(), self.leverage, price)
                 self.positions.append(pos)
+
 
     def close(self, symbol, side, candle, price=None):
         if price == None:
