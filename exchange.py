@@ -38,8 +38,8 @@ class Exchange:
 
         # self.log = logger
         self.leverage = 10
-        self.order_size = 5
-        self.allowed_balance = 450
+        self.order_size = 20
+        self.allowed_balance = 300
         self.stop_loss_perc = 1
 
 
