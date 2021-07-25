@@ -18,10 +18,10 @@ class Strategy:
     def __init__(self, symbols):
         self.retval = "-"
         # create a pandas dataframe for limit orders
-        self.ordersdf = pandas.DataFrame(columns=['symbol', 'shortprice', 'longprice'])
+        self.ordersdf = pandas.DataFrame(columns=['symbol', 'shortprice', 'longprice', 'side', 'ts'])
         i=0
         while i < len(symbols):
-            self.ordersdf.loc[i]  = [symbols[i], 0.0, 0.0]  # adding a row
+            self.ordersdf.loc[i]  = [symbols[i], 0.0, 0.0, "none", 0.0]  # adding a row
             i = i+1
 
         # self.ordersdf.loc[self.ordersdf['symbol'] == 'AAVEUSDT', 'shortprice'] = 4.5
@@ -39,6 +39,7 @@ class Strategy:
         self.symbol = sym
         self.ex1 = ex1
         if len(data5min)==102:
+            self.currentts = float(data5min.iloc[101]['t1'])
         #     print(data5min)
         #     self.ts = data5min.iloc[100]['t1']
         #     self.lasto = data5min.iloc[100]['open']
@@ -186,6 +187,15 @@ class Strategy:
                 self.df.iloc[101]['trend_cci']) < float(200)
             self.closeshortCondition = float(self.df.iloc[100]['trend_cci']) < float(-200) and float(
                 self.df.iloc[101]['trend_cci']) > float(-200)
+
+            #there was a bug so ...
+            self.longisok = False
+            self.shortisok = False
+            self.last_side = str(self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'side'])
+            self.last_ts = float(self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'ts'])
+            self.longisok = (self.last_side!="long") or (self.last_ts != self.currentts)
+            self.shortisok = (self.last_side != "short") or (self.last_ts != self.currentts)
+
             # print(self.df)
             # self.cc5l = float(self.df.iloc[251]["trend_cci_low"])
             # self.cc5n = float(self.df.iloc[251]["trend_cci"])
@@ -218,14 +228,14 @@ class Strategy:
 
 
 
-            if (self.longCondition or self.longConditionnew) and (not self.closelongCondition):
+            if (self.longCondition or self.longConditionnew) and (self.longisok):
                 self.strat_log.info("long: " + self.symbol)
                 print("long: " + self.symbol)
                 self.ex1.open_long(self.symbol)
                 # set pandas limit price order to zero so that we won't get that direction next time
                 self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'longprice'] = 0.0
 
-            if (self.shortCondition or self.shortConditionnew) and (not self.closeshortCondition):
+            if (self.shortCondition or self.shortConditionnew) and (self.shortisok):
                 print("short: " + self.symbol)
                 self.strat_log.info("short: " + self.symbol)
                 self.ex1.open_short(self.symbol)
@@ -239,8 +249,12 @@ class Strategy:
     def update_positions(self):
         if self.closelongCondition:
             self.ex1.close_long(self.symbol)
+            self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'side'] = "long"
+            self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'ts'] = self.currentts
             pass
 
         if self.closeshortCondition:
             self.ex1.close_short(self.symbol)
+            self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'side'] = "short"
+            self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'ts'] = self.currentts
             pass
