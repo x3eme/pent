@@ -21,7 +21,7 @@ class Strategy:
         self.ordersdf = pandas.DataFrame(columns=['symbol', 'shortprice', 'longprice', 'side', 'ts'])
         i=0
         while i < len(symbols):
-            self.ordersdf.loc[i]  = [symbols[i], 0.0, 0.0, "none", 0.0]  # adding a row
+            self.ordersdf.loc[i]  = [symbols[i], 0.0, 0.0, 0, 0.0]  # adding a row
             i = i+1
 
         # self.ordersdf.loc[self.ordersdf['symbol'] == 'AAVEUSDT', 'shortprice'] = 4.5
@@ -45,7 +45,7 @@ class Strategy:
         #     self.lasto = data5min.iloc[100]['open']
         #     self.lasth = data5min.iloc[100]['high']
         #     self.lastl = data5min.iloc[100]['low']
-        #     self.lastc = data5min.iloc[100]['close']
+            self.lastc = data5min.iloc[101]['close']
         # # self.candles = "["+str(self.ts)+","+str(self.lasto)+","+str(self.lasth)+","+str(self.lastl)+","+str(self.lastc)+"]"
         #     self.candle = []
         #     self.candle.append(self.ts)
@@ -88,11 +88,15 @@ class Strategy:
         self.hh2 = 0.0
         self.ll3 = 10000000.0
         self.hh3 = 0.0
+        self.hhindex = 0
+        self.llindex = 0
         while indd<101:
             if self.data.iloc[indd]['high']>self.hh:
                 self.hh = self.data.iloc[indd]['high']
+                self.hhindex = 101-indd
             if self.data.iloc[indd]['low']<self.ll:
                 self.ll = self.data.iloc[indd]['low']
+                self.llindex = 101-indd
             indd+=1
         while indd1<100:
             if self.data.iloc[indd]['high']>self.hh1:
@@ -142,10 +146,10 @@ class Strategy:
             if float(self.df.iloc[101]["trend_adx"]) < float(15):
                 self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'shortprice'] = self.ll
                 self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'longprice'] = self.hh
-            self.longCondition = float(self.df.iloc[101]['high']) > self.hh and float(
-                self.df.iloc[101]["trend_adx"])<float(15)
+            self.longCondition = float(self.df.iloc[101]['high']) > self.hh and float(self.df.iloc[101]["trend_adx"])<float(15) and (
+                self.hhindex != 1 or self.df.iloc[100]["trend_adx"]>float(15)) and self.lastc<self.hh*1.001
             self.shortCondition = float(self.df.iloc[101]['low']) < self.ll and float(
-                self.df.iloc[101]["trend_adx"]) < float(15)
+                self.df.iloc[101]["trend_adx"]) < float(15) and (self.llindex != 1 or self.df.iloc[100]["trend_adx"]>float(15)) and self.lastc>self.ll*0.999
 
             self.longCondition1 = float(self.df.iloc[100]['high']) > self.hh1 and float(
                 self.df.iloc[100]["trend_adx"]) < float(15)
@@ -191,10 +195,16 @@ class Strategy:
             #there was a bug so ...
             self.longisok = False
             self.shortisok = False
-            self.last_side = str(self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'side'])
+            self.last_side = float(self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'side'])
             self.last_ts = float(self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'ts'])
-            self.longisok = (self.last_side!="long") or (self.last_ts != self.currentts)
-            self.shortisok = (self.last_side != "short") or (self.last_ts != self.currentts)
+            self.longisok = (self.last_side!=float(2)) or (self.last_ts != self.currentts)
+            self.shortisok = (self.last_side != float(1)) or (self.last_ts != self.currentts)
+
+            # print(self.ordersdf)
+            # print(self.symbol+ ": price: "+str(self.lastc)+" hh: "+str(self.hh)+" ll: "+str(self.ll)+ " lastts: "+
+            #       str(self.last_ts)+ " currentts: "+str(self.currentts)+" lastside: "+str(self.last_side) +" so islongok: "+
+            #       str(self.longisok) + " shortisok : "+str(self.shortisok))
+
 
             # print(self.df)
             # self.cc5l = float(self.df.iloc[251]["trend_cci_low"])
@@ -249,12 +259,14 @@ class Strategy:
     def update_positions(self):
         if self.closelongCondition:
             self.ex1.close_long(self.symbol)
-            self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'side'] = "long"
+            # print(self.symbol+ " closed long")
+            self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'side'] = 2
             self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'ts'] = self.currentts
             pass
 
         if self.closeshortCondition:
             self.ex1.close_short(self.symbol)
-            self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'side'] = "short"
+            # print(self.symbol + " closed short")
+            self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'side'] = 1
             self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'ts'] = self.currentts
             pass
