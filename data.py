@@ -1,4 +1,5 @@
 import sqlite3
+import warnings
 
 import pandas
 import psycopg2
@@ -49,6 +50,12 @@ class Data:
                                            database=self.dbdb)
     def get_5min_by_symbol(self,symbol) -> pandas.DataFrame:
         newdf = self.all_data.loc[self.all_data['s3'] == symbol]
+        # print(str(len(newdf)))
+        # print (newdf['t1'])
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            newdf.drop(newdf.tail(len(newdf)-102).index, inplace=True)
+        # print(str(len(newdf)))
         newdf = newdf.reindex(index=newdf.index[::-1])
         # newdf.columns = [desc[0] for desc in newdf.description]
         return newdf
@@ -78,9 +85,9 @@ class Data:
             bnc = self.binance
             symb = symbol.replace("/", "").replace("USDT", "/USDT")
 
-            cans = bnc.fetch_ohlcv(symbol=symb, timeframe=timeframe)
+            cans = bnc.fetch_ohlcv(symbol=symb, timeframe=timeframe,limit=250)
             cans.pop()
-
+            conn = self.dbconnect()
             for ca in cans:
                 t = ca[0]
                 o = ca[1]
@@ -95,18 +102,17 @@ class Data:
                 dt = datetime.datetime.fromtimestamp(t / 1000)
 
                 print("t={} o={} h={} l={} c={} v={}".format(dt, o, h, l, c, v))
-                conn = self.dbconnect()
-                cursor = conn.cursor()
-                sql_insert_query = """ INSERT INTO \"""" + "klines" + """\" ("t1","t2","s3","i4","f5","l6","o7","c8","h9",
-                                            "l10","v11","n12","x13","q14","v15","q16","b17")
-                                            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-                                            ON CONFLICT ("t1","s3","i4") DO UPDATE SET
-                                            ("f5","l6","o7","c8","h9","l10","v11","n12","x13","q14","v15","q16") = 
-                                            (EXCLUDED.f5,EXCLUDED.l6,EXCLUDED.o7,EXCLUDED.c8,EXCLUDED.h9,EXCLUDED.l10,
-                                            EXCLUDED.v11,EXCLUDED.n12,EXCLUDED.x13,EXCLUDED.q14,EXCLUDED.v15,
-                                            EXCLUDED.q16)"""
 
-                cursor.execute(sql_insert_query, (t, None, s, i, None, None, o, c, h, l, v, None, x, None, None, None, None))
+                cursor = self.connection.cursor()
+                sql_insert_query = """ INSERT INTO \"""" + "klines" + """\" ("t1","s3","i4","o7","c8","h9",
+                                            "l10","v11","x13")
+                                            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                                            ON CONFLICT ("t1","s3","i4") DO UPDATE SET
+                                            ("o7","c8","h9","l10","v11") = 
+                                            (EXCLUDED.o7,EXCLUDED.c8,EXCLUDED.h9,EXCLUDED.l10,
+                                            EXCLUDED.v11)"""
+
+                cursor.execute(sql_insert_query, (t, s, i, o, c, h, l, v, x))
                 self.connection.commit()
 
 
@@ -170,7 +176,7 @@ class Data:
         try:
             conn = self.dbconnect()
             cursor = conn.cursor()
-            postgreSQL_select_Query = "SELECT t1,s3, o7 as Open,h9 as High,l10 as Low,c8 as Close,v11 as Volume FROM klines order by t1 desc LIMIT 11220 " #WHERE x13='true'
+            postgreSQL_select_Query = "SELECT t1,s3, o7 as Open,h9 as High,l10 as Low,c8 as Close,v11 as Volume FROM klines order by t1 desc LIMIT 11934 " #WHERE x13='true'
             cursor.execute(postgreSQL_select_Query)
             kline_records = cursor.fetchall()
             df = pandas.DataFrame(kline_records)

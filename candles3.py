@@ -38,7 +38,9 @@ class Strategy:
 
         self.symbol = sym
         self.ex1 = ex1
-        if len(data5min)==102:
+        # print(str((float(data5min.iloc[101]['t1']))))
+        if (len(data5min)==102) and ((float(data5min.iloc[101]['t1'])-float(data5min.iloc[0]['t1']))==101*5*60*1000):
+            # print("data ok")
             self.currentts = float(data5min.iloc[101]['t1'])
         #     print(data5min)
         #     self.ts = data5min.iloc[100]['t1']
@@ -72,6 +74,9 @@ class Strategy:
             self.ta()
             self.decide()
             self.update_positions()
+        else:
+            print("data corrupt ..." + self.symbol)
+            data.Data().fix(symbol=self.symbol,timeframe="5m")
 
     def ta(self):
         self.df = self.data
