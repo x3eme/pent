@@ -4,6 +4,8 @@ import pandas
 import psycopg2
 import util
 import time,datetime
+import ccxt
+
 
 
 class Data:
@@ -18,6 +20,19 @@ class Data:
             self.dbhost = data[2]
             self.dbport = data[3]
             self.dbdb = data[4]
+            self.binance_api_key = data[5]
+            self.binance_api_secret = data[6]
+
+
+        self.binance = ccxt.binance({
+            'apiKey': self.binance_api_key,
+            'secret': self.binance_api_secret,
+            'enableRateLimit': True,  # https://github.com/ccxt/ccxt/wiki/Manual#rate-limit
+            'options': {
+                'defaultType': 'future',
+                "adjustForTimeDifference": True
+            }
+        })
 
 
         #init attribs and load data from db
@@ -49,6 +64,62 @@ class Data:
             print("we have backwardness : ", time_lag, " Minutes!")
             print("database is not updating or check if local system datetime is not set to UTC")
         return live
+
+
+    def fix(self, symbol, timeframe="5m"):
+
+        self.connection = psycopg2.connect(user=self.dbuser,
+                                           password=self.dbpass,
+                                           host=self.dbhost,
+                                           port=self.dbport,
+                                           database=self.dbdb)
+
+        try:
+            bnc = self.binance
+            symb = symbol.replace("/", "").replace("USDT", "/USDT")
+
+            cans = bnc.fetch_ohlcv(symbol=symb, timeframe=timeframe)
+            cans.pop()
+
+            for ca in cans:
+                t = ca[0]
+                o = ca[1]
+                h = ca[2]
+                l = ca[3]
+                c = ca[4]
+                v = ca[5]
+                s = symbol
+                i = timeframe
+                x = "true"
+
+                dt = datetime.datetime.fromtimestamp(t / 1000)
+
+                print("t={} o={} h={} l={} c={} v={}".format(dt, o, h, l, c, v))
+                conn = self.dbconnect()
+                cursor = conn.cursor()
+                sql_insert_query = """ INSERT INTO \"""" + "klines" + """\" ("t1","t2","s3","i4","f5","l6","o7","c8","h9",
+                                            "l10","v11","n12","x13","q14","v15","q16","b17")
+                                            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                                            ON CONFLICT ("t1","s3","i4") DO UPDATE SET
+                                            ("f5","l6","o7","c8","h9","l10","v11","n12","x13","q14","v15","q16") = 
+                                            (EXCLUDED.f5,EXCLUDED.l6,EXCLUDED.o7,EXCLUDED.c8,EXCLUDED.h9,EXCLUDED.l10,
+                                            EXCLUDED.v11,EXCLUDED.n12,EXCLUDED.x13,EXCLUDED.q14,EXCLUDED.v15,
+                                            EXCLUDED.q16)"""
+
+                cursor.execute(sql_insert_query, (t, None, s, i, None, None, o, c, h, l, v, None, x, None, None, None, None))
+                self.connection.commit()
+
+
+        except (Exception, psycopg2.Error) as error:
+            print("DB Error: ", error)
+            pass
+
+        finally:
+            # closing database connection.
+            if (conn):
+                cursor.close()
+                conn.close()
+
 
 
     def load(self) -> pandas.DataFrame:
@@ -198,3 +269,30 @@ class Data:
 # test =Data('ONTUSDT', '1h')
 #
 # print(test.data)
+def main():
+    sym = "AAVE/USDT"
+    bnc = Data().binance
+    cans = bnc.fetch_ohlcv(symbol=sym, timeframe='5m')
+    cans.pop()
+    print(cans)
+
+    count = 0
+    for ca in cans:
+        t = ca[0]
+        o = ca[1]
+        h = ca[2]
+        l = ca[3]
+        c = ca[4]
+        v = ca[5]
+
+        count = count+1
+        dt = datetime.datetime.fromtimestamp(t/1000)
+
+        print("t={} o={} h={} l={} c={} v={}".format(dt,o,h,l,c,v))
+
+
+
+
+
+if __name__ == '__main__':
+    main()
