@@ -146,7 +146,10 @@ class Strategy:
         except :
             # print(e)
             print("some errors here")
+        self.bothside = False
         try:
+            if float(self.df.iloc[101]['high']) >= self.hh and float(self.df.iloc[101]['low']) <= self.ll:
+                self.bothside = True
             # update pandas if adx below 15
             if float(self.df.iloc[100]["trend_adx"]) < float(15):
                 self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'shortprice'] = self.ll
@@ -242,20 +245,20 @@ class Strategy:
 
 
 
+            if self.bothside == False:
+                if (self.longCondition or self.longConditionnew) and (self.longisok):
+                    self.strat_log.info("long: " + self.symbol)
+                    print("long: " + self.symbol)
+                    self.ex1.open_long(self.symbol)
+                    # set pandas limit price order to zero so that we won't get that direction next time
+                    self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'longprice'] = 0.0
 
-            if (self.longCondition or self.longConditionnew) and (self.longisok):
-                self.strat_log.info("long: " + self.symbol)
-                print("long: " + self.symbol)
-                self.ex1.open_long(self.symbol)
-                # set pandas limit price order to zero so that we won't get that direction next time
-                self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'longprice'] = 0.0
-
-            if (self.shortCondition or self.shortConditionnew) and (self.shortisok):
-                print("short: " + self.symbol)
-                self.strat_log.info("short: " + self.symbol)
-                self.ex1.open_short(self.symbol)
-                # set pandad limit price order to zero so that we won't get that direction next time
-                self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'shortprice'] = 0.0
+                if (self.shortCondition or self.shortConditionnew) and (self.shortisok):
+                    print("short: " + self.symbol)
+                    self.strat_log.info("short: " + self.symbol)
+                    self.ex1.open_short(self.symbol)
+                    # set pandad limit price order to zero so that we won't get that direction next time
+                    self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'shortprice'] = 0.0
 
 
         except:
