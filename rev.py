@@ -34,7 +34,7 @@ class kline:
             cursor.execute(postgreSQL_select_Query)
             self.symbol_records = cursor.fetchall()
 
-            print("Print each row and it's columns values")
+            # print("Print each row and it's columns values")
             for row in self.symbol_records:
                 if (row[1]=="btcusdt"):
                     self.first_pair = ''+row[1]+'@kline_5m'  # first pair
@@ -44,16 +44,17 @@ class kline:
                 # print("Id = ", row[0], )
                 # print("Model = ", row[1])
                 # print("Price  = ", row[2], "\n")
-
+            print("pairs loaded!")
         except (Exception, psycopg2.Error) as error:
             print("Error while fetching data from PostgreSQL", error)
 
         finally:
             # closing database connection.
             if (self.connection):
+                pass
                 # cursor.close()
                 # self.connection.close()
-                print("PostgreSQL connection is closed")
+                # print("pairs loaded")
         self.pairs = self.pairs[:-1]
         self.pairs = self.pairs+'],  "id": 1}'
         # print(self.first_pair)
@@ -393,8 +394,8 @@ class kline:
                 # save_candle(js)
                 try:
                     self.save_candle(js['k']['t'],js['k']['T'],js['k']['s'],js['k']['i'],js['k']['f'],js['k']['L'],js['k']['o'],js['k']['c'],js['k']['h'],js['k']['l'],js['k']['v'],js['k']['n'],js['k']['x'],js['k']['q'],js['k']['v'],js['k']['Q'],js['k']['B'])
-                except:
-                    print("error")
+                except Exception  as e :
+                    print("error"+ str(e))
 
 k= kline()
 asyncio.get_event_loop().run_until_complete(k.candle_stick_data())

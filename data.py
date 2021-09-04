@@ -41,7 +41,8 @@ class Data:
         # self.interval = interval
         # self.data = self.load()
     def get_historical_data(self):
-        conn = sqlite3.connect(db_file)
+        pass
+        #conn = sqlite3.connect(db_file)
     def dbconnect(self):
         return psycopg2.connect(user=self.dbuser,
                                            password=self.dbpass,

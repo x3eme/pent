@@ -81,10 +81,10 @@ class Strategy:
     def ta(self):
         self.df = self.data
         #find hh and ll
-        indd = 91
-        indd1 = 90
-        indd2 = 89
-        indd3 = 88
+        indd = 92
+        indd1 = 91
+        indd2 = 90
+        indd3 = 89
         self.ll = 10000000.0
         self.hh = 0.0
         self.ll1 = 10000000.0
@@ -124,13 +124,13 @@ class Strategy:
         try:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
-                self.df["trend_adx"] = ta.trend.adx(
+                self.df["trend_adx"] = ta.trend.ADXIndicator(
                     high=self.df['high'],
                     low=self.df['low'],
                     close=self.df['close'],
                     window=14,
                     fillna=False,
-                )
+                ).adx()
             # normal
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
@@ -148,28 +148,28 @@ class Strategy:
             print("some errors here")
         try:
             # update pandas if adx below 15
-            if float(self.df.iloc[101]["trend_adx"]) < float(15):
+            if float(self.df.iloc[100]["trend_adx"]) < float(15):
                 self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'shortprice'] = self.ll
                 self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'longprice'] = self.hh
-            self.longCondition = float(self.df.iloc[101]['high']) > self.hh and float(self.df.iloc[101]["trend_adx"])<float(15) and (
-                self.hhindex != 1 or self.df.iloc[100]["trend_adx"]>float(15)) and self.lastc<self.hh*1.001
-            self.shortCondition = float(self.df.iloc[101]['low']) < self.ll and float(
-                self.df.iloc[101]["trend_adx"]) < float(15) and (self.llindex != 1 or self.df.iloc[100]["trend_adx"]>float(15)) and self.lastc>self.ll*0.999
+            self.longCondition = float(self.df.iloc[101]['high']) >= self.hh and float(self.df.iloc[100]["trend_adx"])<float(15) and (
+                self.hhindex != 1 or self.df.iloc[99]["trend_adx"]>float(15)) and self.lastc<self.hh*1.001
+            self.shortCondition = float(self.df.iloc[101]['low']) <= self.ll and float(
+                self.df.iloc[100]["trend_adx"]) < float(15) and (self.llindex != 1 or self.df.iloc[99]["trend_adx"]>float(15)) and self.lastc>self.ll*0.999
 
-            self.longCondition1 = float(self.df.iloc[100]['high']) > self.hh1 and float(
-                self.df.iloc[100]["trend_adx"]) < float(15)
-            self.shortCondition1 = float(self.df.iloc[100]['low']) < self.ll1 and float(
-                self.df.iloc[100]["trend_adx"]) < float(15)
-
-            self.longCondition2 = float(self.df.iloc[99]['high']) > self.hh2 and float(
+            self.longCondition1 = float(self.df.iloc[100]['high']) >= self.hh1 and float(
                 self.df.iloc[99]["trend_adx"]) < float(15)
-            self.shortCondition2 = float(self.df.iloc[99]['low']) < self.ll2 and float(
+            self.shortCondition1 = float(self.df.iloc[100]['low']) <= self.ll1 and float(
                 self.df.iloc[99]["trend_adx"]) < float(15)
 
-            self.longCondition3 = float(self.df.iloc[98]['high']) > self.hh3 and float(
+            self.longCondition2 = float(self.df.iloc[99]['high']) >= self.hh2 and float(
                 self.df.iloc[98]["trend_adx"]) < float(15)
-            self.shortCondition3 = float(self.df.iloc[98]['low']) < self.ll3 and float(
+            self.shortCondition2 = float(self.df.iloc[99]['low']) <= self.ll2 and float(
                 self.df.iloc[98]["trend_adx"]) < float(15)
+
+            self.longCondition3 = float(self.df.iloc[98]['high']) >= self.hh3 and float(
+                self.df.iloc[97]["trend_adx"]) < float(15)
+            self.shortCondition3 = float(self.df.iloc[98]['low']) <= self.ll3 and float(
+                self.df.iloc[97]["trend_adx"]) < float(15)
 
 
 
@@ -179,8 +179,8 @@ class Strategy:
             self.pastll = float(self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'shortprice'])
             self.pasthh = float(self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'longprice'])
 
-            self.longConditionnew = (self.pasthh != 0.0 and float(self.df.iloc[101]['high']) > self.pasthh and float(self.df.iloc[100]['high']) < self.pasthh and float(self.df.iloc[99]['high']) < self.pasthh and float(self.df.iloc[98]['high']) < self.pasthh)
-            self.shortConditionnew = (self.pastll != 0.0 and float(self.df.iloc[101]['low']) < self.pastll and float(self.df.iloc[100]['low']) > self.pastll  and float(self.df.iloc[99]['low']) > self.pastll and float(self.df.iloc[98]['low']) > self.pastll)
+            self.longConditionnew = (self.pasthh != 0.0 and float(self.df.iloc[101]['high']) >= self.pasthh and float(self.df.iloc[100]['high']) < self.pasthh and float(self.df.iloc[99]['high']) < self.pasthh and float(self.df.iloc[98]['high']) < self.pasthh)
+            self.shortConditionnew = (self.pastll != 0.0 and float(self.df.iloc[101]['low']) <= self.pastll and float(self.df.iloc[100]['low']) > self.pastll  and float(self.df.iloc[99]['low']) > self.pastll and float(self.df.iloc[98]['low']) > self.pastll)
 
             # clear limit short and long prices if we are not at exact cross of limit :
             if (self.pasthh != 0.0 and float(self.df.iloc[101]['high']) > self.pasthh) and (
@@ -192,10 +192,10 @@ class Strategy:
                     self.df.iloc[99]['low']) < self.pastll or float(self.df.iloc[98]['low']) < self.pastll):
                 self.ordersdf.loc[self.ordersdf['symbol'] == self.symbol, 'shortprice'] = 0.0
 
-            self.closelongCondition = float(self.df.iloc[100]['trend_cci']) > float(200) and float(
-                self.df.iloc[101]['trend_cci']) < float(200)
-            self.closeshortCondition = float(self.df.iloc[100]['trend_cci']) < float(-200) and float(
-                self.df.iloc[101]['trend_cci']) > float(-200)
+            self.closelongCondition = float(self.df.iloc[99]['trend_cci']) > float(200) and float(
+                self.df.iloc[100]['trend_cci']) < float(200)
+            self.closeshortCondition = float(self.df.iloc[99]['trend_cci']) < float(-200) and float(
+                self.df.iloc[100]['trend_cci']) > float(-200)
 
             #there was a bug so ...
             self.longisok = False
@@ -206,9 +206,9 @@ class Strategy:
             self.shortisok = (self.last_side != float(1)) or (self.last_ts != self.currentts)
 
             # print(self.ordersdf)
-            # print(self.symbol+ ": price: "+str(self.lastc)+" hh: "+str(self.hh)+" ll: "+str(self.ll)+ " lastts: "+
+            # print(self.symbol+ ": ADX: "+str(float(self.df.iloc[100]["trend_adx"]))+" price: "+str(self.lastc)+" hh: "+str(self.hh)+" ll: "+str(self.ll)+ " lastts: "+
             #       str(self.last_ts)+ " currentts: "+str(self.currentts)+" lastside: "+str(self.last_side) +" so islongok: "+
-            #       str(self.longisok) + " shortisok : "+str(self.shortisok))
+            #       str(self.longisok) + " so shortisok : "+str(self.shortisok))
 
 
             # print(self.df)
