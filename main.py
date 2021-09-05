@@ -52,7 +52,7 @@ class main:
             cnt = len(self.symbol_records)
             # print(self.symbol_records)
         except Exception as e:
-            print('There was an error during initialization: ' + str(e))
+            print('There was... an error during initialization: ' + str(e))
             traceback.print_exc()
         wait_sec = 0
         while True:
