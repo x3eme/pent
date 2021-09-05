@@ -5,6 +5,9 @@ import logging
 import psycopg2
 from position import Position
 from order import Order
+import time
+import datetime
+
 
 def same_symbol(symbol_a, symbol_b):
     symbol1 = symbol_a.replace("/", "").replace("USDT", "/USDT")
@@ -427,11 +430,22 @@ def main():
 
     ###################################################################################
     # create the exchange
-    bnc = Exchange(logger=order_logger)
+    bnc = Exchange()
+    num = 1
 
-    order = bnc.binance.fetch_open_orders("CHR/USDT")
-    print(order)
-    print(order[0]["info"]["orderId"])
+    date_string = "08/22/2021"
+    date = datetime.datetime.strptime(date_string, "%m/%d/%Y")
+    timestamp = int(datetime.datetime.timestamp(date)*1000)
+    print(timestamp)
+
+    orders = bnc.binance.fetch_closed_orders(since=timestamp, symbol="ADA/USDT")
+    for order in orders:
+        symbol = order['symbol']
+        type = "close" if order['info']['reduceOnly']==True else "open"
+        side = "LONG" if order['info']['side']=="BUY" else "SHRT"
+
+        print("{}. {} {}\t\t{}\t{}\t\t{}".format(num,symbol,type, side, order['datetime'].replace("T", " "), order))
+        num=num+1
 
 
     ###################################################################################
