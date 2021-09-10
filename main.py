@@ -45,7 +45,7 @@ class main:
 
             self.symbol_records = ["BNBUSDT", "DOGEUSDT", "FTMUSDT", "RENUSDT", "SANDUSDT",
                                    "ICPUSDT", "LITUSDT", "OMGUSDT", "COTIUSDT", "ICXUSDT",
-                                   "BAKEUSDT", "DENTUSDT", "ALICEUSDT", "BANDUSDT",
+                                   "BAKEUSDT", "DENTUSDT", "ALICEUSDT", "BANDUSDT", "BATUSDT",
                                    "AVAXUSDT", "THETAUSDT", "LUNAUSDT", "XRPUSDT"]
             # self.symbol_records = ["AAVEUSDt"]
             self.c3 = candles3.Strategy(self.symbol_records)
