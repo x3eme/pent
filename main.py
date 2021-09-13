@@ -43,9 +43,9 @@ class main:
 
             # self.symbol_records = self.my_data.get_symbols()
 
-            self.symbol_records = ["BNBUSDT", "DOGEUSDT", "FTMUSDT", "RENUSDT", "SANDUSDT",
+            self.symbol_records = ["DOGEUSDT", "FTMUSDT", "RENUSDT", "SANDUSDT",
                                    "ICPUSDT", "LITUSDT", "OMGUSDT", "COTIUSDT", "ICXUSDT",
-                                   "BAKEUSDT", "DENTUSDT", "ALICEUSDT", "BANDUSDT", "BATUSDT",
+                                   "ALICEUSDT", "BANDUSDT", "BATUSDT",
                                    "AVAXUSDT", "THETAUSDT", "LUNAUSDT", "XRPUSDT"]
             # self.symbol_records = ["AAVEUSDt"]
             self.c3 = candles3.Strategy(self.symbol_records)
