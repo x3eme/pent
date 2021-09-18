@@ -6,6 +6,7 @@ import psycopg2
 import util
 import time,datetime
 import ccxt
+import datetime as dt
 
 
 
@@ -168,12 +169,22 @@ class Data:
         return df
 
     def update(self) -> pandas.DataFrame:
-        #update dataframe
         self.connection = psycopg2.connect(user=self.dbuser,
                                            password=self.dbpass,
                                            host=self.dbhost,
                                            port=self.dbport,
                                            database=self.dbdb)
+        #DELETE older data:
+
+        if dt.datetime.now().hour==1 and dt.datetime.now().minute==1 :
+            cursor = self.connection.cursor()
+            sql_insert_query = """ DELETE FROM \"""" + "klines" + """\" where t1<(SELECT max(t1) FROM \"""" + "klines" + """\" as maxx) - 367200001"""
+
+            cursor.execute(sql_insert_query)
+            self.connection.commit()
+
+        #update dataframe
+
         try:
             conn = self.dbconnect()
             cursor = conn.cursor()
