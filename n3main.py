@@ -1,13 +1,13 @@
 
-import data
+import n3data
 # import hcstra_2
-from exchange import Exchange
+from n3exchange import Exchange
 # import winsound
 import logging
 import time
 import traceback
 # import pastra
-import candles3
+import n3mastra
 
 
 class main:
@@ -38,14 +38,22 @@ class main:
             self.strat_log.addHandler(strategy_handler)
             self.strat_log.setLevel(logging.INFO)
 
-            self.my_data = data.Data()
+            self.my_data = n3data.Data()
             self.exch = Exchange(self.ord_log)
 
             # self.symbol_records = self.my_data.get_symbols()
 
-            self.symbol_records = ["BALUSDT"]
-            # self.symbol_records = ["AAVEUSDt"]
-            self.c3 = candles3.Strategy(self.symbol_records)
+            # self.symbol_records = ["AAVEUSDT", "BNBUSDT", "DOGEUSDT", "FTMUSDT",
+            #                        "ICPUSDT", "LITUSDT", "MATICUSDT", "OMGUSDT", "COTIUSDT",
+            #                        "ADAUSDT", "ATOMUSDT", "BAKEUSDT", "DENTUSDT",
+            #                        "AVAXUSDT", "NEARUSDT", "NKNUSDT", "THETAUSDT", "LUNAUSDT", "XRPUSDT"]
+            self.symbol_records = ["AKROUSDT", "AUDIOUSDT", "AVAXUSDT", "AXSUSDT", "BALUSDT",
+                                    "BANDUSDT", "BELUSDT", "BLZUSDT", "CHZUSDT", "EGLDUSDT",
+                                    "FLMUSDT", "IOSTUSDT", "KLAYUSDT", "KSMUSDT", "LRCUSDT",
+                                    "NEOUSDT", "QTUMUSDT", "RAYUSDT", "RENUSDT", "SKLUSDT",
+                                    "THETAUSDT", "WAVESUSDT", "XMRUSDT", "YFIUSDT", "ZILUSDT",
+                                    "ONTUSDT", "RLCUSDT", "TRBUSDT", "ZENUSDT", "PEOPLEUSDT"]
+            self.c3 = n3mastra.Strategy(self.symbol_records)
             cnt = len(self.symbol_records)
             # print(self.symbol_records)
         except Exception as e:
