@@ -1,4 +1,3 @@
-import winsound
 from datetime import datetime
 
 import hta
