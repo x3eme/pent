@@ -128,16 +128,19 @@ class iranex:
             st = self.wtime(name + " :start")
             stt = float(str(st)[-3:])
             if(stt>befrest and stt<befrest+25):
+                stime = self.wtime("result received")
                 self.URL = self.nobitexURL
                 r = requests.get(url=self.URL)  # , params=PARAMS)
-                # etime = self.wtime("result received")
+
                 data = r.json()
                 # print(data)
                 self.results(data,st,name)
                 self.wtime(name +" :finish")
+                etime = self.wtime("result received")
+                print(str(etime - st) + " travel")
             time.sleep(0.005)
 
-        # print(str(etime - stime) + " travel")
+
 
         return data
 
