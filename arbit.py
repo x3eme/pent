@@ -4,12 +4,13 @@ import iranex
 import time
 import pandas
 import threading
+
 class arbit:
     def __init__(self):
         self.b = binex.binex()
         self.ir = iranex.iranex()
         self.bdata=""
-
+        self.dataisnew = False
         self.available_usdt = float(self.ir.get_single_balance("usdt"))
         print("on nobitex available usdt : " + str(self.available_usdt))
         self.log = logic.logic()
@@ -38,45 +39,47 @@ class arbit:
             time.sleep(1)
     def run(self):
 
-        while True and self.bdata !="":
-            # find opportunity
-            # result_df = self.log.find2(self.res2)
-            result_df = self.log.find(self.res2, self.bdata)
-            if len(result_df)>0 and self.available_usdt > 11:
-                print(result_df)
+        while True :
+            if self.bdata !="" and self.dataisnew:
+                self.dataisnew = False
+                # find opportunity
+                # result_df = self.log.find2(self.res2)
+                result_df = self.log.find(self.res2, self.bdata)
+                if len(result_df)>0 and self.available_usdt > 11:
+                    print(result_df)
 
-                for index, row in result_df.iterrows():
-                    sym = row['symbol']
-                    price = row['price']
-                    symAmount = row['totalvol']
-                    usdtAmount = row['usdtvol']
-                    actionAmount = self.available_usdt / price
+                    for index, row in result_df.iterrows():
+                        sym = row['symbol']
+                        price = row['price']
+                        symAmount = row['totalvol']
+                        usdtAmount = row['usdtvol']
+                        actionAmount = self.available_usdt / price
 
-                    # place limit order on ir exchange
-                    order_id = self.ir.order_set("buy", "limit", sym[0:-4], "usdt", str(actionAmount), price) # price is in Rials
-                    print("nobitex buy filled id : " + str(order_id))
-                    # sleep for 0.1 sec
-                    time.sleep(0.1)
+                        # place limit order on ir exchange
+                        order_id = self.ir.order_set("buy", "limit", sym[0:-4], "usdt", str(actionAmount), price) # price is in Rials
+                        print("nobitex buy filled id : " + str(order_id))
+                        # sleep for 0.1 sec
+                        time.sleep(0.1)
 
-                    # cancel order anyway
-                    print(self.ir.close_orders("limit",sym[0:-4],"usdt")) #returns: {'status': 'ok'}
+                        # cancel order anyway
+                        print(self.ir.close_orders("limit",sym[0:-4],"usdt")) #returns: {'status': 'ok'}
 
-                    # check order quantity fulfilled
-                    matchedAmount = float(self.ir.order_status(str(order_id)))  # returns: matchedAmount: 0 averagePrice: 0
-                    print("matched Amount : " + str(matchedAmount))
-                    # frequency = 2500  # Set Frequency To 2500 Hertz
-                    # duration = 1000  # Set Duration To 1000 ms == 1 second
-                    # winsound.Beep(frequency, duration)
-                    if float(matchedAmount) > 0.0:
-                        #create binance short order
-                        self.b.set_leverage(10,sym)
-                        self.b.order_market(sym,"sell",matchedAmount)
+                        # check order quantity fulfilled
+                        matchedAmount = float(self.ir.order_status(str(order_id)))  # returns: matchedAmount: 0 averagePrice: 0
+                        print("matched Amount : " + str(matchedAmount))
+                        # frequency = 2500  # Set Frequency To 2500 Hertz
+                        # duration = 1000  # Set Duration To 1000 ms == 1 second
+                        # winsound.Beep(frequency, duration)
+                        if float(matchedAmount) > 0.0:
+                            #create binance short order
+                            self.b.set_leverage(10,sym)
+                            self.b.order_market(sym,"sell",matchedAmount)
 
 
 
-            # finally
-            print("-----------------------------------------------------")
-            time.sleep(0.001)
+                # finally
+                print("-----------------------------------------------------")
+                time.sleep(0.001)
 
     def results(self, res, stime, name):
         self.res1 = self.res2
@@ -86,7 +89,7 @@ class arbit:
 
         # compare for diff
         if self.res1 != self.res2:
-
+            self.dataisnew  =True
             self.dic[name] += 1
             print(name + " diff from : " + str(self.res1t) + " to " + str(stime) + " diff: " + str(
                 self.res2t - self.res1t))
@@ -120,40 +123,40 @@ test = arbit()
 
 a = threading.Thread(target=test.test, args=("a", 100))
 a.start()
-time.sleep(0.1)
+time.sleep(0.01)
 
 b = threading.Thread(target=test.test, args=("b", 200))
 b.start()
-time.sleep(0.1)
+time.sleep(0.01)
 
 c = threading.Thread(target=test.test, args=("c", 300))
 c.start()
 #
-time.sleep(0.1)
+time.sleep(0.01)
 d = threading.Thread(target=test.test, args=("d", 400))
 d.start()
 
-time.sleep(0.1)
+time.sleep(0.01)
 e = threading.Thread(target=test.test, args=("e", 500))
 e.start()
-time.sleep(0.1)
+time.sleep(0.01)
 
 f = threading.Thread(target=test.test, args=("f", 600))
 f.start()
-time.sleep(0.1)
+time.sleep(0.01)
 
 g = threading.Thread(target=test.test, args=("g", 700))
 g.start()
 
-time.sleep(0.1)
+time.sleep(0.01)
 h = threading.Thread(target=test.test, args=("h", 800))
 h.start()
 
-time.sleep(0.1)
+time.sleep(0.01)
 i = threading.Thread(target=test.test, args=("i", 900))
 i.start()
 
-time.sleep(0.1)
+time.sleep(0.01)
 j = threading.Thread(target=test.test, args=("j", 0))
 j.start()
 
