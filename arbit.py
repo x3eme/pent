@@ -155,7 +155,7 @@ j = threading.Thread(target=test.test, args=("j", 0))
 j.start()
 
 z = threading.Thread(target = test.run,args=())
-# z.start()
+z.start()
 
 
 a.join()
