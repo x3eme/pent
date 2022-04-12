@@ -18,8 +18,8 @@ class binex:
         try:
             sym = symbol.replace('USDT','/USDT')
             print("symb " + sym)
-            market = self.binance.markets[sym]
-            response = self.binance.fapiPrivatePostLeverage({
+            market = self.ex.markets[sym]
+            response = self.ex.fapiPrivatePostLeverage({
                 'symbol': market['id'],  # market id
                 'leverage': leverage,  # 1-255
             })
@@ -105,7 +105,7 @@ b = binex()
 
 # print("---")
 #
-# print(b.set_leverage(10,"API3USDT"))
+print(b.set_leverage(10,"BTCUSDT"))
 # print(b.get_all_positions())
 
 # print(b.get_bid("BTCUSDT"))

@@ -6,7 +6,7 @@ import ccstra
 import rsistochstra
 import ccstra_ma_filter
 import ccstra_x2
-import btcandles3
+import n3mastratest
 from plot import Plot
 import data
 import binance
@@ -49,7 +49,7 @@ class Backtest:
         print("loading data 5min ...")
         self.cur = self.conn.cursor()
         self.cur.execute(
-            "SELECT timespan1, CAST(open as float) as open ,CAST(high as float) as high ,CAST(low as float) as low ,CAST(close as float) as close,volume,trend_cci, trend_adx FROM " + pair + "_5m_TA where timespan1>" + str(
+            "SELECT timespan1 as t1, CAST(open as float) as open ,CAST(high as float) as high ,CAST(low as float) as low ,CAST(close as float) as close,volume FROM " + pair + "_5m where timespan1>" + str(
                 self.start_timespan - 1) + " and timespan1<" + str(self.finish_timespan + 1) + "")
         self.rows = self.cur.fetchall()
         print("data loaded ...")
@@ -74,7 +74,7 @@ class Backtest:
         ind = 0
         while self.go:
             # call
-            sub_df = df.iloc[ind:ind + 102, ]
+            sub_df = df.iloc[ind:ind + 252, ]
             sub_df = sub_df.reindex(index=sub_df.index[::1])
 
             # currenttimestamp = sub_df.iloc[21]["timespan1"]+300000
@@ -87,7 +87,7 @@ class Backtest:
             # sub_df2 = sub_df2.reindex(index=sub_df2.index[::1])
                 # print(sub_df)
                 # print(sub_df2)
-            btcandles3.Strategy().exec(sym=pair, data5min=sub_df, ex1=ex1)
+            n3mastratest.Strategy().exec(sym=pair, data5min=sub_df, ex1=ex1)
             if ((ind + 103) > total_rows):
                 self.go = False
             else:
@@ -109,7 +109,7 @@ class Backtest:
 def main():
     pl = Plot()
     threads = []
-    pairs = ["EOSUSDT","BCHUSDT","BNBUSDT","ETHUSDT"]
+    pairs = ["ETHUSDT"]
     for p in pairs:
         bt = Backtest()
         t = Thread(target=bt.run, args=(p,pl))
