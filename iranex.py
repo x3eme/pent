@@ -13,11 +13,7 @@ class iranex:
         self.wallexURL = "https://api.wallex.ir/v1/depth?symbol="
         self.nobitexURL = "https://api.nobitex.ir/v2/orderbook/all"
         self.nobitexKey = "1e131e81f4eb930e8022343fc540068b387bb425"
-        self.res1=""
-        self.res2=""
-        self.res1t = 0
-        self.res2t = 0
-        self.dic = {"a":0,"b":0,"c":0,"d":0, "e":0, "f":0}
+
         pass
     def getbook(self,exchange, pair):
         if exchange == "nobitex":
@@ -111,124 +107,12 @@ class iranex:
             bals[x['currency']] = x['balance']
         # print(dataOut)
         return bals
-    def results(self,res,stime, name):
-        self.res1 = self.res2
-        self.res1t = self.res2t
-        self.res2 = res
-        self.res2t = stime
-
-        #compare for diff
-        if self.res1 != self.res2:
-            self.dic[name] += 1
-            print(name + " diff from : " + str(self.res1t) + " to "+ str(stime) + " diff: " + str(self.res2t - self.res1t))
-
-    def test(self, name, befrest):
-        data = ""
-        for x in range(400000):
-            st = self.wtime(name + " :start")
-            stt = float(str(st)[-3:])
-            if(stt>befrest and stt<befrest+25):
-                stime = self.wtime("result received")
-                self.URL = self.nobitexURL
-                r = requests.get(url=self.URL)  # , params=PARAMS)
-
-                data = r.json()
-                # print(data)
-                self.results(data,st,name)
-                self.wtime(name +" :finish")
-                etime = self.wtime("result received")
-                print(str(etime - st) + " travel")
-            time.sleep(0.005)
-
-
-
-        return data
-
-    def wtime(self, strr):
-        # print(str(round(time.time() * 1000)) + " " + strr)
-        return round(time.time() * 1000)
-    def test2(self):
-        self.a=""
-        self.at = 0.0
-        self.bt = 0.0
-        self.b=""
-        for x in range(50):
-            # print("---------")
-            atime = round(time.time() * 1000)
-            self.a = self.b
-            self.bt = self.at
-            self.b = test.test()
-            btime = round(time.time() * 1000)
-            ttime = (btime + atime) /2
-            self.at = ttime
-
-            print ("tt : " + str(btime-atime))
-
-            sleeptime = 1100 - ttime
-
-            if self.a!=self.b:
-                self.wtime("diff")
-                # time.sleep(sleeptime / 1000)
-                print("from : " +str(self.bt) + " to : " + str(self.at))
-
-            else:
-                # print("the same")
-                pass
-    def run(self,ms):
-        x1 = ms
-        x2 = ms+100
-        for x in range(1000):
-            time.sleep(0.001)
-            now = int(str(self.wtime("me"))[-3:])
-            if now == x1: #and now <x1+10:
-                print("found")
-
-
-test = iranex()
-# test.test("a")
-a = threading.Thread(target = test.test,args=("a",450))
-a.start()
-time.sleep(0.1)
-
-b = threading.Thread(target = test.test,args=("b",475))
-b.start()
-time.sleep(0.1)
-
-c = threading.Thread(target = test.test,args=("c",500))
-c.start()
-#
-time.sleep(0.1)
-d = threading.Thread(target = test.test,args=("d",525))
-d.start()
-
-#
-e = threading.Thread(target = test.test,args=("e",550))
-e.start()
-time.sleep(0.1)
-
-f = threading.Thread(target = test.test,args=("f",575))
-f.start()
-time.sleep(0.1)
-
-a.join()
-b.join()
-c.join()
-d.join()
-e.join()
-f.join()
-
-print(test.dic)
 
 
 #
 
 #
-# g = threading.Thread(target = test.test,args=("g",9))
-# g.start()
 
-# time.sleep(0.1)
-# h = threading.Thread(target = test.test,args=("h",0))
-# h.start()
 # ------------------------- Hello , these are sample methods we have got here and how they work along with th results ...
 
 # test.nobitex_key() # this gives the Authorization key required for all actions

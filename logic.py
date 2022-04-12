@@ -15,6 +15,7 @@ class logic:
         self.minDiff2 = 1
 
 
+
         # get current positions:
         self.opports = {}
 
@@ -54,16 +55,18 @@ class logic:
                     print(key + " : Diff : " + str(diffpercent) + " Vol: " + str(irvol))
 
 
-    def find(self)-> pandas.DataFrame:
+    def find(self,ldata)-> pandas.DataFrame:
         #go thru pairs
         #if a pair has min perc. record it in oppt. list
         #sort list from best to worst
         #return best oppt. pair.
+        # self.data = ldata
+
         self.founds = self.founds[0:0]
         self.chances = 0
         self.worstgood = 0
         self.bp = self.b.get_last_prices()
-        self.irp = self.ir.getallbooks("nobitex")
+        self.irp = ldata
         # print(self.irp)
         for key in self.irp:
             value = self.irp[key]
@@ -82,7 +85,7 @@ class logic:
                         totalAmount += float(irvol)
                         self.worstgood = irprice
                         print(key + ": binance : " + str(bprice) +" nobitex: "+ str(irprice)+" : Diff : " + str(diffpercent) + " Vol(usdt): " + str(usdtAmount))
-                if totalAmount > 11:
+                if totalUsdtAmount > 11:
                     print("Accepted Arbitrage position on : " + key + " with usdt Amount of : " + str(totalUsdtAmount))
                     new_row = {'symbol': key, 'price': float(self.worstgood), 'totalvol': totalAmount, 'usdtvol': totalUsdtAmount}
                     # append row to the dataframe
@@ -90,7 +93,7 @@ class logic:
                     self.chances += 1
         # print(self.chances)
         return self.founds
-    def find2(self)-> pandas.DataFrame:
+    def find2(self,ldata)-> pandas.DataFrame:
         #go thru pairs
         #if a pair has min perc. record it in oppt. list
         #sort list from best to worst
@@ -99,7 +102,7 @@ class logic:
         self.chances = 0
         self.worstgood = 0
         self.bp = self.b.get_last_prices()
-        self.irp = self.ir.getallbooks("nobitex")
+        self.irp = ldata
         # print(self.irp)
         for key in self.irp:
             value = self.irp[key]
