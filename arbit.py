@@ -104,6 +104,8 @@ class arbit:
             # etime = self.wtime("result received")
             data = self.ir.getallbooks("nobitex")
             # print(data)
+
+
             self.results(data, st, name)
             self.wtime(name + " :finish")
             time.sleep(0.005)
