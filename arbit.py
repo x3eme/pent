@@ -59,7 +59,7 @@ class arbit:
                         order_id = self.ir.order_set("buy", "limit", sym[0:-4], "usdt", str(actionAmount), price) # price is in Rials
                         print("nobitex buy filled id : " + str(order_id))
                         # sleep for 0.1 sec
-                        # time.sleep(3)
+                        time.sleep(1)
 
                         # cancel order anyway
                         # print(self.ir.close_orders("limit",sym[0:-4],"usdt")) #returns: {'status': 'ok'}
