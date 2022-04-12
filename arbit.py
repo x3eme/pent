@@ -4,7 +4,6 @@ import iranex
 import time
 import pandas
 import threading
-import winsound
 class arbit:
     def __init__(self):
         self.b = binex.binex()
@@ -65,9 +64,9 @@ class arbit:
                     # check order quantity fulfilled
                     matchedAmount = float(self.ir.order_status(str(order_id)))  # returns: matchedAmount: 0 averagePrice: 0
                     print("matched Amount : " + str(matchedAmount))
-                    frequency = 2500  # Set Frequency To 2500 Hertz
-                    duration = 1000  # Set Duration To 1000 ms == 1 second
-                    winsound.Beep(frequency, duration)
+                    # frequency = 2500  # Set Frequency To 2500 Hertz
+                    # duration = 1000  # Set Duration To 1000 ms == 1 second
+                    # winsound.Beep(frequency, duration)
                     if float(matchedAmount) > 0.0:
                         #create binance short order
                         self.b.set_leverage(10,sym)
