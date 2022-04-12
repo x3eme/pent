@@ -65,6 +65,7 @@ class logic:
         self.founds = self.founds[0:0]
         self.chances = 0
         self.worstgood = 0
+
         self.bp = bdata
         self.irp = ldata
         # print(self.irp)

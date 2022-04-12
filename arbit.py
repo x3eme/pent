@@ -4,7 +4,7 @@ import iranex
 import time
 import pandas
 import threading
-
+import winsound
 class arbit:
     def __init__(self):
         self.b = binex.binex()
@@ -65,9 +65,9 @@ class arbit:
                     # check order quantity fulfilled
                     matchedAmount = float(self.ir.order_status(str(order_id)))  # returns: matchedAmount: 0 averagePrice: 0
                     print("matched Amount : " + str(matchedAmount))
-                    # frequency = 2500  # Set Frequency To 2500 Hertz
-                    # duration = 1000  # Set Duration To 1000 ms == 1 second
-                    # winsound.Beep(frequency, duration)
+                    frequency = 2500  # Set Frequency To 2500 Hertz
+                    duration = 1000  # Set Duration To 1000 ms == 1 second
+                    winsound.Beep(frequency, duration)
                     if float(matchedAmount) > 0.0:
                         #create binance short order
                         self.b.set_leverage(10,sym)
@@ -94,22 +94,22 @@ class arbit:
 
     def test(self, name, befrest):
         data = ""
-        while True:
+        for x in range(400000):
             st = self.wtime(name + " :start")
             stt = float(str(st)[-3:])
-
-            # self.URL = self.nobitexURL
-            # r = requests.get(url=self.URL)  # , params=PARAMS)
-            # etime = self.wtime("result received")
-            data = self.ir.getallbooks("nobitex")
-            # print(data)
-            self.results(data, st, name)
-            self.wtime(name + " :finish")
-            # time.sleep(0.005)
+            if (stt > befrest and stt < befrest + 50):
+                # self.URL = self.nobitexURL
+                # r = requests.get(url=self.URL)  # , params=PARAMS)
+                # etime = self.wtime("result received")
+                data = self.ir.getallbooks("nobitex")
+                # print(data)
+                self.results(data, st, name)
+                self.wtime(name + " :finish")
+            time.sleep(0.005)
 
         # print(str(etime - stime) + " travel")
 
-        # return data
+        return data
 
     def wtime(self, strr):
         # print(str(round(time.time() * 1000)) + " " + strr)
@@ -121,40 +121,40 @@ test = arbit()
 
 a = threading.Thread(target=test.test, args=("a", 100))
 a.start()
-time.sleep(0.01)
+time.sleep(0.1)
 
 b = threading.Thread(target=test.test, args=("b", 200))
 b.start()
-time.sleep(0.01)
+time.sleep(0.1)
 
 c = threading.Thread(target=test.test, args=("c", 300))
 c.start()
 #
-time.sleep(0.01)
+time.sleep(0.1)
 d = threading.Thread(target=test.test, args=("d", 400))
 d.start()
 
-time.sleep(0.01)
+time.sleep(0.1)
 e = threading.Thread(target=test.test, args=("e", 500))
 e.start()
-time.sleep(0.01)
+time.sleep(0.1)
 
 f = threading.Thread(target=test.test, args=("f", 600))
 f.start()
-time.sleep(0.01)
+time.sleep(0.1)
 
 g = threading.Thread(target=test.test, args=("g", 700))
 g.start()
 
-time.sleep(0.01)
+time.sleep(0.1)
 h = threading.Thread(target=test.test, args=("h", 800))
 h.start()
 
-time.sleep(0.01)
+time.sleep(0.1)
 i = threading.Thread(target=test.test, args=("i", 900))
 i.start()
 
-time.sleep(0.01)
+time.sleep(0.1)
 j = threading.Thread(target=test.test, args=("j", 0))
 j.start()
 
