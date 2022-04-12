@@ -105,7 +105,7 @@ b = binex()
 
 # print("---")
 #
-print(b.set_leverage(10,"BTCUSDT"))
+# print(b.set_leverage(10,"BTCUSDT"))
 # print(b.get_all_positions())
 
 # print(b.get_bid("BTCUSDT"))
