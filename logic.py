@@ -55,7 +55,7 @@ class logic:
                     print(key + " : Diff : " + str(diffpercent) + " Vol: " + str(irvol))
 
 
-    def find(self,ldata)-> pandas.DataFrame:
+    def find(self,ldata,bdata)-> pandas.DataFrame:
         #go thru pairs
         #if a pair has min perc. record it in oppt. list
         #sort list from best to worst
@@ -65,7 +65,7 @@ class logic:
         self.founds = self.founds[0:0]
         self.chances = 0
         self.worstgood = 0
-        self.bp = self.b.get_last_prices()
+        self.bp = bdata
         self.irp = ldata
         # print(self.irp)
         for key in self.irp:
