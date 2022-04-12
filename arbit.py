@@ -59,7 +59,7 @@ class arbit:
                         order_id = self.ir.order_set("buy", "limit", sym[0:-4], "usdt", str(actionAmount), price) # price is in Rials
                         print("nobitex buy filled id : " + str(order_id))
                         # sleep for 0.1 sec
-                        time.sleep(1)
+                        time.sleep(0.1)
 
                         # cancel order anyway
                         print(self.ir.close_orders("limit",sym[0:-4],"usdt")) #returns: {'status': 'ok'}
@@ -74,12 +74,13 @@ class arbit:
                             #create binance short order
                             self.b.set_leverage(10,sym)
                             self.b.order_market(sym,"sell",matchedAmount)
+                            self.updateAvailableUsdtAmount()
 
 
 
                 # finally
                 print("-----------------------------------------------------")
-                # time.sleep(0.001)
+                time.sleep(0.001)
 
     def results(self, res, stime, name):
         self.res1 = self.res2
@@ -93,7 +94,10 @@ class arbit:
             self.dic[name] += 1
             print(name + " diff from : " + str(self.res1t) + " to " + str(stime) + " diff: " + str(
                 self.res2t - self.res1t))
-
+    def updateAvailableUsdtAmount(self):
+        self.available_usdt = float(self.ir.get_single_balance("usdt"))
+        print("New Balance : " + str(self.available_usdt))
+        time.sleep(12)
     def test(self, name, befrest):
         data = ""
         while True:
@@ -166,6 +170,9 @@ z.start()
 
 y = threading.Thread(target = test.updatebinancedata,args =() )
 y.start()
+
+x = threading.Thread(target = test.updateAvailableUsdtAmount(),args =() )
+x.start()
 
 a.join()
 b.join()
