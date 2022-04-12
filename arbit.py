@@ -4,6 +4,7 @@ import iranex
 import time
 import pandas
 import threading
+import math
 
 class arbit:
     def __init__(self):
@@ -53,7 +54,7 @@ class arbit:
                         price = row['price']
                         symAmount = row['totalvol']
                         usdtAmount = row['usdtvol']
-                        actionAmount = self.available_usdt / price
+                        actionAmount = math.floor(self.available_usdt) / price
 
                         # place limit order on ir exchange
                         order_id = self.ir.order_set("buy", "limit", sym[0:-4], "usdt", str(actionAmount), price) # price is in Rials
