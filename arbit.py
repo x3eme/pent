@@ -96,17 +96,16 @@ class arbit:
 
     def test(self, name, befrest):
         data = ""
-        for x in range(400000):
+        while True:
             st = self.wtime(name + " :start")
-            stt = float(str(st)[-3:])
-            if (stt > befrest and stt < befrest + 50):
-                # self.URL = self.nobitexURL
-                # r = requests.get(url=self.URL)  # , params=PARAMS)
-                # etime = self.wtime("result received")
-                data = self.ir.getallbooks("nobitex")
-                # print(data)
-                self.results(data, st, name)
-                self.wtime(name + " :finish")
+            # stt = float(str(st)[-3:])
+            # self.URL = self.nobitexURL
+            # r = requests.get(url=self.URL)  # , params=PARAMS)
+            # etime = self.wtime("result received")
+            data = self.ir.getallbooks("nobitex")
+            # print(data)
+            self.results(data, st, name)
+            self.wtime(name + " :finish")
             time.sleep(0.005)
 
         # print(str(etime - stime) + " travel")
