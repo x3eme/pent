@@ -51,8 +51,48 @@ class binbook:
                         print('Reconnecting...')
                         self.dc=True
                         time.sleep(1)
-                        sock = await websockets.connect(self.url+self.first_pair)
-                        await sock.send(self.pairs)
+                        sock = await websockets.connect(self.url+"btcusdt@depth5")
+                        await sock.send(json.dumps(
+                            {
+                                "method": "SUBSCRIBE",
+                                "params": ['bnbusdt@depth5', 'ethusdt@depth5', 'bchusdt@depth5', 'xrpusdt@depth5',
+                                           'eosusdt@depth5', 'ltcusdt@depth5', 'trxusdt@depth5', 'etcusdt@depth5',
+                                           'linkusdt@depth5', 'xlmusdt@depth5', 'adausdt@depth5', 'xmrusdt@depth5',
+                                           'dashusdt@depth5', 'zecusdt@depth5', 'xtzusdt@depth5', 'atomusdt@depth5',
+                                           'ontusdt@depth5', 'iotausdt@depth5', 'batusdt@depth5', 'vetusdt@depth5',
+                                           'neousdt@depth5', 'qtumusdt@depth5', 'iostusdt@depth5', 'thetausdt@depth5',
+                                           'algousdt@depth5', 'zilusdt@depth5', 'kncusdt@depth5', 'zrxusdt@depth5',
+                                           'compusdt@depth5', 'omgusdt@depth5', 'dogeusdt@depth5', 'sxpusdt@depth5',
+                                           'kavausdt@depth5', 'bandusdt@depth5', 'rlcusdt@depth5', 'wavesusdt@depth5',
+                                           'mkrusdt@depth5', 'snxusdt@depth5', 'dotusdt@depth5', 'defiusdt@depth5',
+                                           'yfiusdt@depth5', 'balusdt@depth5', 'crvusdt@depth5', 'trbusdt@depth5',
+                                           'runeusdt@depth5', 'sushiusdt@depth5', 'srmusdt@depth5', 'egldusdt@depth5',
+                                           'solusdt@depth5', 'icxusdt@depth5', 'storjusdt@depth5', 'blzusdt@depth5',
+                                           'uniusdt@depth5', 'avaxusdt@depth5', 'ftmusdt@depth5', 'hntusdt@depth5',
+                                           'enjusdt@depth5', 'flmusdt@depth5', 'tomousdt@depth', 'renusdt@depth5',
+                                           'ksmusdt@depth5', 'nearusdt@depth5', 'aaveusdt@depth5', 'filusdt@depth5',
+                                           'rsrusdt@depth5', 'lrcusdt@depth5', 'maticusdt@depth5', 'oceanusdt@depth5',
+                                           'cvcusdt@depth5', 'belusdt@depth5', 'ctkusdt@depth5', 'axsusdt@depth5',
+                                           'alphausdt@depth5', 'zenusdt@depth5', 'sklusdt@depth5', 'grtusdt@depth5',
+                                           '1inchusdt@depth5', 'acrousdt@depth5', 'chzusdt@depth5', 'sandusdt@depth5',
+                                           'ankrusdt@depth5', 'lunausdt@depth5', 'btsusdt@depth5', 'litusdt@depth5',
+                                           'unfiusdt@depth5', 'dodousdt@depth5', 'reefusdt@depth5', 'rvnusdt@depth5',
+                                           'sfpusdt@depth5', 'xemusdt@depth5', 'cotiusdt@depth5', 'chrusdt@depth5',
+                                           'manausdt@depth5', 'aliceusdt@depth5', 'hbarusdt@depth5', 'oneusdt@depth5',
+                                           'linausdt@depth5', 'stmxusdt@depth5', 'dentusdt@depth5', 'celrusdt@depth5',
+                                           'hotusdt@depth5', 'mtlusdt@depth5', 'ognusdt@depth5', 'nknusdt@depth5',
+                                           'scusdt@depth5', 'dgbusdt@depth5', '1000shibusdt@depth5', 'icpusdt@depth5',
+                                           'bakeusdt@depth5', 'gtcusdt@depth5', 'btcdomusdt@depth5', 'tlmusdt@depth5',
+                                           'iotxusdt@depth5', 'audiousdt@depth5', 'rayusdt@depth5', 'c98usdt@depth5',
+                                           'maskusdt@depth5', 'atausdt@depth5', 'dydxusdt@depth5', '1000xecusdt@depth5',
+                                           'galausdt@depth5', 'celousdt@depth5', 'arusdt@depth5', 'klayusdt@depth5',
+                                           'arpausdt@depth5', 'ctsiusdt@depth5', 'lptusdt@depth5', 'ensusdt@depth5',
+                                           'peopleusdt@depth5', 'antusdt@depth5', 'roseusdt@depth5', 'duskusdt@depth5',
+                                           'flowusdt@depth5', 'imxusdt@depth5', 'api3usdt@depth5', 'ancusdt@depth5',
+                                           'gmtusdt@depth5', 'apeusdt@depth5', 'bnxusdt@depth5', 'woousdt@depth5',
+                                           'fttusdt@depth5'],
+                                "id": 1,
+                            }))
                     except:
                         pass
             js = json.loads(resp)
