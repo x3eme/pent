@@ -3,9 +3,13 @@ import ccxt
 class binex:
 
     def __init__(self):
+        with open('keys.txt', 'r') as file:
+            data = file.read().split('\n')
+            cn1 = data[0]
+            cn2 = data[1]
         self.ex = ccxt.binance({
-            'apiKey': 'PdrOQxCfl40l11UOUrlQBVweoIcuX4LBkQUUGvMl8gsTsPWsGFiSdU3oQllKJVCp',
-            'secret': 'YF9rWjve77q5frFy6HRRG52oixIRET9VMV4lZXEhTrGWq2LVzuT4DM2YvcjhEsCP',
+            'apiKey': cn1,
+            'secret': cn2,
             'enableRateLimit': True,  # required https://github.com/ccxt/ccxt/wiki/Manual#rate-limit
             'options': {
                 'defaultType': 'future',
