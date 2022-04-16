@@ -11,7 +11,7 @@ class logic:
         self.founds = pandas.DataFrame(columns=["symbol", "price", "totalvol", "usdtvol"])
 
         # minimum Arbitrage
-        self.minDiff = 0.7
+        self.minDiff = 0.5
         self.minDiff2 = 1
 
 

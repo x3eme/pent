@@ -48,6 +48,7 @@ class arbit:
     def run(self):
         # time.sleep(4)
         while True:
+            # a=self.wtime("start")
             # print("run strated ...")
             # if self.bdata !="" and self.dataisnew:    this is also deprecated we check repeatedly ....
             # self.dataisnew = False
@@ -91,6 +92,8 @@ class arbit:
                         self.updateAvailableUsdtAmount()
             # finally
             # print("-----------------------------------------------------") dont print anything ...
+            # b = self.wtime("finish")
+            # print(str(b-a))
             time.sleep(0.001)
 
     def results(self, res, stime, name):
