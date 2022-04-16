@@ -3,12 +3,12 @@ import json
 import os
 import sys
 import csv
-import psycopg2
+
 import time
 import asyncio
 import datetime
 import threading
-import numpy as np
+
 import ccxt  # noqa: E402
 import pandas
 
