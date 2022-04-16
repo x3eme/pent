@@ -57,6 +57,7 @@ class arbit:
             result_df = self.log.find(self.res2, self.bindata.bbook)
             if len(result_df)>0 and self.available_usdt > 11:
                 print("-------------------------------------------------------------------------")
+                print(self.res2)
                 print(result_df)
                 # print(self.bindata.bbook)
 
