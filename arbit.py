@@ -59,36 +59,36 @@ class arbit:
                 print(result_df)
                 # print(self.bindata.bbook)
 
-                # for index, row in result_df.iterrows():
-                #     sym = row['symbol']
-                #     price = row['price']
-                #     symAmount = row['totalvol']
-                #     usdtAmount = row['usdtvol']
-                #     actionAmount = self.available_usdt / price
-                #
-                #     # place limit order on ir exchange
-                #     order_id = self.ir.order_set("buy", "limit", sym[0:-4], "usdt", str(actionAmount), price) # price is in Rials
-                #     print("nobitex buy filled id : " + str(order_id))
-                #     # sleep for 0.1 sec
-                #     time.sleep(3)
-                #
-                #     # check order quantity fulfilled
-                #     matchedAmount = float(self.ir.order_status(str(order_id)))  # returns: matchedAmount: 0 averagePrice: 0
-                #     print("matched Amount : " + str(matchedAmount))
-                #
-                #     # cancel order anyway
-                #     self.ir.close_orders("limit", sym[0:-4], "usdt")  # returns: {'status': 'ok'}
-                #
-                #
-                #
-                #     # frequency = 2500  # Set Frequency To 2500 Hertz
-                #     # duration = 1000  # Set Duration To 1000 ms == 1 second
-                #     # winsound.Beep(frequency, duration)
-                #     if float(matchedAmount) > 0.0:
-                #         #create binance short order
-                #         self.b.set_leverage(10,sym)
-                #         self.b.order_market(sym,"sell",matchedAmount)
-                #         self.updateAvailableUsdtAmount()
+                for index, row in result_df.iterrows():
+                    sym = row['symbol']
+                    price = row['price']
+                    symAmount = row['totalvol']
+                    usdtAmount = row['usdtvol']
+                    actionAmount = self.available_usdt / price
+
+                    # place limit order on ir exchange
+                    order_id = self.ir.order_set("buy", "limit", sym[0:-4], "usdt", str(actionAmount), price) # price is in Rials
+                    print("nobitex buy filled id : " + str(order_id))
+                    # sleep for 0.1 sec
+                    time.sleep(3)
+
+                    # check order quantity fulfilled
+                    matchedAmount = float(self.ir.order_status(str(order_id)))  # returns: matchedAmount: 0 averagePrice: 0
+                    print("matched Amount : " + str(matchedAmount))
+
+                    # cancel order anyway
+                    self.ir.close_orders("limit", sym[0:-4], "usdt")  # returns: {'status': 'ok'}
+
+
+
+                    # frequency = 2500  # Set Frequency To 2500 Hertz
+                    # duration = 1000  # Set Duration To 1000 ms == 1 second
+                    # winsound.Beep(frequency, duration)
+                    if float(matchedAmount) > 0.0:
+                        #create binance short order
+                        self.b.set_leverage(10,sym)
+                        self.b.order_market(sym,"sell",matchedAmount)
+                        self.updateAvailableUsdtAmount()
             # finally
             # print("-----------------------------------------------------") dont print anything ...
             time.sleep(0.001)
