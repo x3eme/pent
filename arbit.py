@@ -174,7 +174,7 @@ class arbit:
         if self.res1 != self.res2:
             # self.dataisnew  =True
             self.dic[name] += 1
-            # print(name + " diff from : " + str(self.res1t) + " to " + str(stime) + " diff: " + str(self.res2t - self.res1t))
+            print(name + " diff from : " + str(self.res1t) + " to " + str(stime) + " diff: " + str(self.res2t - self.res1t))
 
     def updateAvailableUsdtAmount(self):
         self.available_usdt = float(self.ir.get_single_balance("usdt"))
