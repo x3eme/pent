@@ -115,7 +115,7 @@ class arbit:
             # find opportunity
             # result_df = self.log.find2(self.res2)
             result_df = self.log.find(self.res2, self.bindata.bbook)
-            if len(result_df)>0 and self.available_usdt > 11 and False:
+            if len(result_df)>0 and self.available_usdt > 11:
                 print("-------------------------------------------------------------------------")
                 # print(self.res2)
                 print(result_df)
