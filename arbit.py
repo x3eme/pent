@@ -25,17 +25,70 @@ class arbit:
 
         # converge
         self.positions = pandas.DataFrame(columns=["symbol", "longprice", "shortprice", "longat", "shortat", "amount"])
+        # for test :
+        # new_row = {'symbol': "linkusdt", 'longprice': str(20), 'shortprice': str(21), 'longat': "nobitex",
+        #            'shortat': "binance", 'amount': str(10)}
+        # # append row to the dataframe
+        # self.positions = self.positions.append(new_row, ignore_index=True)
+
+
 
         # y = threading.Thread(target=asyncio.get_event_loop().run_until_complete(self.bindata.orders_data()), args=())
         # y.start()
 
     def runc(self):
         # check for converg.
-        while True:
-            self.log.find_converge(self.res2, self.bindata.bbook,"btcusdt")
-            time.sleep(1)
-            if len(self.positions.index) > 0:
-                print(self.positions)
+        for index, row in self.positions.iterrows():
+            if row['longat'] == "nobitex":
+                symbol = row['symbol']
+                aa = self.log.find_converge(self.res2, self.bindata.bbook, symbol)
+                if len(str(aa)) > 3: #convergence happened!
+                    conv_vol = float(aa['totalvol'])
+                    conv_price = float(aa['price'])
+                    position_vol = float(row['amount'])
+                    action_amount = 0.0
+
+                    if conv_vol > position_vol:
+                        action_amount = position_vol
+                    else:
+                        action_amount = conv_vol
+                    # open a sell order in irani exchange
+                    order_id = self.ir.order_set("sell", "limit", symbol[0:-4], "usdt", str(action_amount),
+                                                 conv_price)  # price is in Rials
+                    print("nobitex buy filled id : " + str(order_id))
+                    # sleep for 0.1 sec
+                    time.sleep(3)
+
+                    # check order quantity fulfilled
+                    matchedAmount = float(self.ir.order_status(str(order_id)))  # returns: matchedAmount: 0 averagePrice: 0
+                    print("matched Amount : " + str(matchedAmount))
+
+                    # cancel order anyway
+                    self.ir.close_orders("limit", symbol[0:-4], "usdt")  # returns: {'status': 'ok'}
+
+                    # frequency = 2500  # Set Frequency To 2500 Hertz
+                    # duration = 1000  # Set Duration To 1000 ms == 1 second
+                    # winsound.Beep(frequency, duration)
+                    if float(matchedAmount) > 0.0:
+                        # create binance short order
+                        self.b.set_leverage(10, symbol)
+                        self.b.order_market(symbol, "buy", matchedAmount)
+                        self.updateAvailableUsdtAmount()
+
+                        # update positions in pandas
+
+                        if matchedAmount == position_vol:
+                            #delete row
+                            self.positions.drop(index)
+                        elif matchedAmount < position_vol:
+                            #update row
+                            self.positions.at[index,'amount'] = str(position_vol - matchedAmount)
+
+
+
+
+        # time.sleep(1)
+
 
             # bals = self.ir.get_all_balance()
             # for key, value in bals.items():
@@ -62,7 +115,7 @@ class arbit:
             # find opportunity
             # result_df = self.log.find2(self.res2)
             result_df = self.log.find(self.res2, self.bindata.bbook)
-            if len(result_df)>0 and self.available_usdt > 11:
+            if len(result_df)>0 and self.available_usdt > 11 and False:
                 print("-------------------------------------------------------------------------")
                 # print(self.res2)
                 print(result_df)
@@ -108,6 +161,7 @@ class arbit:
             # print("-----------------------------------------------------") dont print anything ...
             # b = self.wtime("finish")
             # print(str(b-a))
+            self.runc()
             time.sleep(0.001)
 
     def results(self, res, stime, name):
@@ -120,7 +174,7 @@ class arbit:
         if self.res1 != self.res2:
             # self.dataisnew  =True
             self.dic[name] += 1
-            print(name + " diff from : " + str(self.res1t) + " to " + str(stime) + " diff: " + str(self.res2t - self.res1t))
+            # print(name + " diff from : " + str(self.res1t) + " to " + str(stime) + " diff: " + str(self.res2t - self.res1t))
 
     def updateAvailableUsdtAmount(self):
         self.available_usdt = float(self.ir.get_single_balance("usdt"))
@@ -197,16 +251,20 @@ j.start()
 #
 #
 #
+time.sleep(0.01)
 z = threading.Thread(target = test.run,args=())
 z.start()
 #
+# time.sleep(0.01)
+# w = threading.Thread(target = test.runc(),args=())
+# w.start()
+time.sleep(0.01)
 x = threading.Thread(target = test.updateAvailableUsdtAmount(),args =() )
 x.start()
 #
 
-# w = threading.Thread(target = test.runc(),args=())
-# w.start()
 
+time.sleep(0.01)
 y = threading.Thread(target = test.updatebinancedata(),args=())
 y.start()
 

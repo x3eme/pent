@@ -12,7 +12,7 @@ class logic:
 
         # minimum Arbitrage
         self.minDiff = 0.5
-        self.minconv = 0.0
+        self.minconv = -0.1
         self.minDiff2 = 1
 
 
@@ -121,7 +121,7 @@ class logic:
         for key in self.irp:
             value = self.irp[key]
             if key.lower() == symbol:
-                print(value)
+                # print(value)
                 bsymbol = key[0:-4]+"/USDT"
                 totalAmount = 0.0
                 totalUsdtAmount = 0.0
@@ -140,7 +140,8 @@ class logic:
                         irvol = ask[1]
 
                         diffpercent = ((float(irprice) * 100) / float(self.bprice)) - 100
-                        if diffpercent > self.minDiff:
+                        # print(str(diffpercent))
+                        if diffpercent > self.minconv:
                             usdtAmount = (float(irvol) * float(irprice))
                             totalUsdtAmount += usdtAmount
                             totalAmount += float(irvol)
@@ -152,7 +153,7 @@ class logic:
         #                 # append row to the dataframe
         #                 self.founds = self.founds.append(new_row, ignore_index=True)
         #                 self.chances += 1
-        print(self.new_row)
+        # print(self.new_row)
         return self.new_row
     def find2(self,ldata)-> pandas.DataFrame:
         #go thru pairs
