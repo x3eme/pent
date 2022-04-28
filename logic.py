@@ -8,10 +8,11 @@ class logic:
         # initials
         self.b = binex.binex()
         self.ir = iranex.iranex()
-        self.founds = pandas.DataFrame(columns=["symbol", "price", "totalvol", "usdtvol"])
+        self.founds = pandas.DataFrame(columns=["symbol", "price", "totalvol", "usdtvol","shortdata"])
 
         # minimum Arbitrage
         self.minDiff = 0.5
+        self.minconv = -0.1
         self.minDiff2 = 1
 
 
@@ -62,6 +63,7 @@ class logic:
         #return best oppt. pair.
         # self.data = ldata
         # print("going to find ...")
+        self.shortdata = ""
         self.founds = self.founds[0:0]
         self.chances = 0
         self.worstgood = 0
@@ -79,17 +81,20 @@ class logic:
                 # bprice = self.bp[bsymbol]['bid']
                 ssind = int(self.bp.index[self.bp['symbol'] == key[0:-4].lower()+"usdt"].values[0])
                 self.bprice = float(self.bp.loc[ssind, 'bid'])
+                self.shortdata = "binance:" + str(self.bprice)
                 # print(self.bprice)
                 # self.bbook.at[ssind, 'bid'] = bb
                 # self.bbook.at[ssind, 'ask'] = aa
                 if self.bprice != 0.0:
                     # print(bdata)
+                    self.shortdata += " nobitex buys: p"+str(value['asks'][0][0]) + " v:"+str(value['asks'][0][1])+" - "
                     for ask in value['bids']:
                         irprice = ask[0]
                         irvol = ask[1]
 
                         diffpercent = ((float(self.bprice) * 100) / float(irprice)) - 100
                         if diffpercent > self.minDiff:
+                            self.shortdata += " nobitex sells: p" + str(irprice) + " v:"+str(irvol)+" - "
                             usdtAmount = (float(irvol) * float(irprice))
                             totalUsdtAmount += usdtAmount
                             totalAmount += float(irvol)
@@ -97,12 +102,59 @@ class logic:
                             print(key + ": binance : " + str(self.bprice) +" nobitex: "+ str(irprice)+" : Diff : " + str(diffpercent) + " Vol(usdt): " + str(usdtAmount))
                     if totalUsdtAmount > 11:
                         print("Accepted Arbitrage position on : " + key + " with usdt Amount of : " + str(totalUsdtAmount))
-                        new_row = {'symbol': key, 'price': float(self.worstgood), 'totalvol': totalAmount, 'usdtvol': totalUsdtAmount}
+                        new_row = {'symbol': key, 'price': float(self.worstgood), 'totalvol': totalAmount, 'usdtvol': totalUsdtAmount, 'shortdata':self.shortdata}
                         # append row to the dataframe
                         self.founds = self.founds.append(new_row, ignore_index=True)
                         self.chances += 1
         # print(self.chances)
         return self.founds
+    def find_converge(self,ldata,bdata,symbol):
+
+        # self.data = ldata
+        # print("going to find ...")
+        # self.chances = 0
+        # self.worstgood = 0
+        self.new_row={}
+        self.bp = bdata
+        self.irp = ldata
+        # # print(self.irp)
+        for key in self.irp:
+            value = self.irp[key]
+            if key.lower() == symbol:
+                # print(value)
+                bsymbol = key[0:-4]+"/USDT"
+                totalAmount = 0.0
+                totalUsdtAmount = 0.0
+        #
+                # get binance best sell(bid) price ...
+                # bprice = self.bp[bsymbol]['bid']
+                ssind = int(self.bp.index[self.bp['symbol'] == key[0:-4].lower()+"usdt"].values[0])
+                self.bprice = float(self.bp.loc[ssind, 'ask'])
+                # print(self.bprice)
+                # self.bbook.at[ssind, 'bid'] = bb
+                # self.bbook.at[ssind, 'ask'] = aa
+                if self.bprice != 0.0:
+                    # print(bdata)
+                    for ask in value['asks']:
+                        irprice = ask[0]
+                        irvol = ask[1]
+
+                        diffpercent = ((float(irprice) * 100) / float(self.bprice)) - 100
+                        # print(str(diffpercent))
+                        if diffpercent > self.minconv:
+                            usdtAmount = (float(irvol) * float(irprice))
+                            totalUsdtAmount += usdtAmount
+                            totalAmount += float(irvol)
+                            self.worstgood = irprice
+                            print(key + ": binance : " + str(self.bprice) +" nobitex: "+ str(irprice)+" : Diff : " + str(diffpercent) + " Vol(usdt): " + str(usdtAmount))
+                    if totalUsdtAmount > 11:
+                        print("Accepted Arbitrage position on : " + key + " with usdt Amount of : " + str(totalUsdtAmount))
+                        self.new_row = {'symbol': key, 'price': float(self.worstgood), 'totalvol': totalAmount, 'usdtvol': totalUsdtAmount}
+        #                 # append row to the dataframe
+        #                 self.founds = self.founds.append(new_row, ignore_index=True)
+        #                 self.chances += 1
+        # print(self.new_row)
+        return self.new_row
     def find2(self,ldata)-> pandas.DataFrame:
         #go thru pairs
         #if a pair has min perc. record it in oppt. list
