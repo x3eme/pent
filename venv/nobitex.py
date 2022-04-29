@@ -14,6 +14,8 @@ class nobitex:
 
         self.count = 0
         self.lsendt = 0.0
+        self.serial = 0
+        self.repeat = 3
 
 
 
@@ -30,18 +32,14 @@ class nobitex:
         return np.average(self.tt)
 
     #sleep for sleeptime and then send a query
-    async def getbook(self, sleeptime: float):
+    async def getbook(self, serial: int, sleeptime: float):
         await asyncio.sleep(sleeptime)
 
         isdiff = 0
         diff = 0.0
         lsendt = 0.0
+        data = ""
 
-
-
-
-
-        print(str(sleeptime)[0:3] + " " + str(round(time.time(),2))[8:])
         sendt = time.time()
 
         future = loop.run_in_executor(None, requests.get, self.noburl)
@@ -57,12 +55,19 @@ class nobitex:
         travel = fin-sendt
         self.travelupdate(travel)
 
-
-        data = r.json()
-        print(travel)
+        try:
+            data = r.json()
+        except:
+            print("format error json")
+        # print(travel)
 
         #if data is different
         if data != self.book:
+
+            print("update " + str(serial) +
+                  " sendt: " + str(sendt) +
+                  " now: " + str(round(time.time(), 2))[8:] +
+                  " travel:" + str(travel))
             #calc. diff & update book
             lsendt = self.lsendt
             diff = sendt - self.lsendt
@@ -74,59 +79,120 @@ class nobitex:
 
         #we have received a response. record that it was the last
         self.lsendt = sendt
-        return isdiff, round(diff,2)*1000, sendt, lsendt, travel*1000
+        return serial, isdiff, round(diff,2)*1000, sendt, lsendt, travel*1000
 
 
     async def main(self, interval, count):
         switch_found = False
-        sendt = 0.0
+        currsendt = 0.0
         travel = 0.0
-        diff = 0.0
-        difff = 0.0
+        currdiff = 0.0
+
+        origsendt = 0.0
+        destsendt = 0.0
 
         while True:
-            print("start-------")
+            print("----- loop -----")
             if not switch_found:
-                for call in asyncio.as_completed([nob.getbook(i) for i in np.arange(0.0, count/10, interval)]):
-                    isdiff, diff, sendt, lsendt, travel = await call
-                    if diff < 200 and sendt > lsendt and lsendt != 0.0 and diff < travel:
-                        switch_found = True
-                        print(str("{} {} diff: {} st: {} lastst: {} travel time: {}").format(
-                            str(round(time.time(),2))[8:],
-                            isdiff,
-                            diff,
-                            str(round(sendt,2))[8:],
-                            str(round(lsendt,2))[8:],
-                            travel))
-                        difff = diff
-                        continue
-            # switch found
-            else:
-                print(time.time())
-                print(str("switch found travel {} diff {}").format(travel, difff))
-                switchtime = 1000-travel
-                first = 1000-travel-100
-                last = 1000-travel+100
-                newrange = 0.25
-                if first >= 0 and travel < 1000:
-                    print(str("first {} last {}").format(first, last))
-                    await asyncio.sleep(first/1000)
-                    for call in asyncio.as_completed([nob.getbook(i) for i in np.arange(0.0, newrange, newrange/5)]):
-                        isdiff, diff, sendt, lsendt, travel = await call
-                        if diff < 200 and sendt > lsendt and lsendt != 0.0 and diff < travel:
+                print("no switch")
+                for call in asyncio.as_completed([nob.getbook(i, serial) for i in np.arange(0.0, count/10, interval)]):
+                    serial, isdiff, diff, sendt, lsendt, travel = await call
+                    if isdiff and diff < 500 and sendt > lsendt and lsendt != 0.0 and diff < travel:
+
+                        if self.serial != serial:
+                            print(str("from last batch st: {} lsendt {}"))
+                        else:
                             switch_found = True
-                            print(str("found again newrange: {} {} {} diff {} st {} lastst {} {}").format(
-                                newrange,
+                            origsendt = lsendt
+                            destsendt = sendt
+                            print(str("switch candid @ {} {} diff: {} st: {} lastst: {} travel time: {}").format(
                                 str(round(time.time(),2))[8:],
                                 isdiff,
                                 diff,
                                 str(round(sendt,2))[8:],
                                 str(round(lsendt,2))[8:],
                                 travel))
-                            continue
+                            break
+            # switch found
+            else:
+                self.serial += 1
+                print(str("serial: {} opt switch found travel {} diff {} lsendt {}").format(self.serial, travel, diff, str(round(lsendt,2))[8:]))
+                switchtime = 1000-travel
+                first = 1000-travel-50
+                last = 1000-travel+50
+                newrange = (100*3)/1000
+                print(newrange*2, newrange)
+                if first >= 0 and travel < 1000:
+                    print(str("first {} last {}").format(first, last))
+                    print(str("sleep for {}").format(first/1000))
+                    await asyncio.sleep(first/1000)
+                    for call in asyncio.as_completed([nob.getbook(i) for i in np.arange(0.0, newrange*2, newrange)]):
+                        isdiff, diff, sendt, lsendt, travel = await call
+                        print(str("bb isdiff: {} diff: {} sendt: {} lsendt: {} travel: {}").format(isdiff, diff, str(round(sendt,2))[8:], str(round(lsendt,2))[8:], travel))
+
+                        if isdiff and diff < 100 and sendt > lsendt and diff < travel:
+                            origsendt = lsendt
+                            destsendt = sendt
+                            switch_found = True
+                            print(str("found again newrange: {} {} {} diff {} st {} lastst {} {}").format(
+                                newrange,
+                                str(round(time.time(),2))[8:],
+                                isdiff,
+                                diff,
+                                str(rou,nd(sendt,2))[8:],
+                                str(round(lsendt,2))[8:],
+                                travel))
+                            break
+                        else:
+                            print("not diff")
                 else:
                     switch_found = False
                     continue
+
+    async def go(self, interval, window):
+        intv = interval
+        wind = window
+        serial = self.serial
+
+        while True:
+            print(str("-- loop -- wind {} intrv {} serial {} {}".format(wind, intv, self.serial, str(round(time.time()))[8:])))
+            ops = [nob.getbook(serial, i) for i in np.arange(0.0, wind, intv)]
+            for call in asyncio.as_completed(ops):
+                serial, isdiff, diff, sendt, lsendt, travel = await call
+                if serial == self.serial and isdiff and sendt > lsendt and diff < 300 and travel<800:
+                    print(str("found serial {} diff {} sendt {} lsendt {} travel {}").
+                          format(serial, diff, str(round(sendt,2))[8:], str(round(lsendt,2))[8:], travel))
+                    serial += 1
+                    # print(str("serial incre {} {}").format(self.serial, serial))
+                    self.serial = serial
+                    wind = max(wind/1.2, 0.4)
+                    intv = max(intv/2, 0.05)
+
+                    startin = 1000 - travel - diff - 50
+                    tt = round(time.time(),2)
+                    tts = round(startin/1000,2)
+                    tttt = tt+tts
+                    print(str("time now {} start in {}").format(str(tt)[6:], str(tts)))
+                    if startin>0:
+                        time.sleep(startin/1000)
+
+                    self.repeat = 3
+                    break
+            #no diff found this round
+            else:
+                if self.repeat == 0:
+                    wind = min(wind*1.3,1)
+                    intv = min(intv*1.3,0.1)
+                    self.repeat = 3
+                else:
+                    self.repeat = self.repeat - 1
+                    # print(str("rep {}").format(self.repeat))
+
+
+
+
+
+
 
 
 
@@ -137,11 +203,7 @@ class nobitex:
 nob = nobitex()
 loop = asyncio.get_event_loop()
 # attack = asyncio.gather(*[nob.getbook(i) for i in np.arange(0.0, 1.0, 0.1)])
-loop.run_until_complete(nob.main(0.1,10))
-print(nob.mindiff*1000)
-
-
-
+loop.run_until_complete(nob.go(0.1,1))
 
 
 
