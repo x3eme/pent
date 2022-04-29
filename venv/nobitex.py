@@ -166,8 +166,8 @@ class nobitex:
                     serial += 1
                     # print(str("serial incre {} {}").format(self.serial, serial))
                     self.serial = serial
-                    wind = max(wind/1.2, 0.4)
-                    intv = max(intv/2, 0.05)
+                    wind = max(wind/1.2, 0.2)
+                    intv = max(intv/2, 0.01)
 
                     startin = 1000 - travel - diff - 50
                     tt = round(time.time(),2)
