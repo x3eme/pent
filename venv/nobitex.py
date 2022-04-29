@@ -160,8 +160,9 @@ class nobitex:
             for call in asyncio.as_completed(ops):
                 serial, isdiff, diff, sendt, lsendt, travel = await call
                 if serial == self.serial and isdiff and sendt > lsendt and diff < 300 and travel<800:
-                    print(str("found serial {} diff {} sendt {} lsendt {} travel {}").
-                          format(serial, diff, str(round(sendt,2))[8:], str(round(lsendt,2))[8:], travel))
+                    # print(str("found serial {} diff {} sendt {} lsendt {} travel {}").
+                    #       format(serial, diff, str(round(sendt,2))[8:], str(round(lsendt,2))[8:], travel))
+                    print(diff)
                     serial += 1
                     # print(str("serial incre {} {}").format(self.serial, serial))
                     self.serial = serial
